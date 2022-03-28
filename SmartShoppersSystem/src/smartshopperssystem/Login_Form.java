@@ -5,21 +5,95 @@
 package smartshopperssystem;
 
 import java.awt.Color;
-import javax.swing.border.Border;
-import javax.swing.BorderFactory;
+import javax.swing.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  *
  * @author patli
  */
 public class Login_Form extends javax.swing.JFrame {
+    
+    File f = new File("C:\\Files");   //file path
+    int ln;
+    // create folder in which record is save
+    private void createFolder() {
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+    }
+    
+    //check file is exist or not
+    void readFile() {
+        try {
+            FileReader fr = new FileReader(f + "\\logins.txt");
+        } catch (FileNotFoundException ex) {
+            try {
+                FileWriter fw = new FileWriter(f + "\\logins.txt");
+            } catch (IOException ex1) {
+            }
+        }
+    }
+    
 
+    // login logic 
+    private void logic(String usr, String pswd) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(f + "\\logins.txt", "rw");
+            
+            if(ln == 0){
+               JOptionPane.showMessageDialog(null, "Invalid Username/Password.", "Login Error", 2); 
+            }
+            
+            for (int i = 0; i < ln; i += 7) {
+                String user = raf.readLine();
+                String [] userValues = splitUser(user);
+                String forUser = userValues[0];
+                String forPswd = userValues[1];
+                if (usr.equals(forUser) & pswd.equals(forPswd)) {
+                    //Needs to go to the correct panel
+                    JOptionPane.showMessageDialog(null, "Login Successfully!!");
+                    break;
+                } else if (i == (ln - 6)) {
+                    JOptionPane.showMessageDialog(null, "Invalid Username/Password.", "Login Error", 2);
+                    break;
+                }
+                for (int k = 1; k <= 5; k++) {
+                    raf.readLine();
+                }
+            }
+        } catch (FileNotFoundException ex) {} 
+        catch (IOException ex) {}
+    }
+    
+    //count the number of lines from file
+    private void countLines() {
+        try {
+            ln = 0;
+            RandomAccessFile raf = new RandomAccessFile(f + "\\logins.txt", "rw");
+            for (int i = 0; raf.readLine() != null; i++) {
+                ln++;
+            }
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+        }
+    }
+    
+    private String[] splitUser(String user){
+        String[] userValues = user.split(",");
+        return userValues;
+    }
+    
     /**
      * Creates new form Login_Form
      */
     public Login_Form() {
         initComponents();
-        
         
         //center the form
         this.setLocationRelativeTo(null);
@@ -41,7 +115,7 @@ public class Login_Form extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jPasswordField_Password = new javax.swing.JPasswordField();
-        jButton1 = new javax.swing.JButton();
+        jButton_Login = new javax.swing.JButton();
         jTextField_Username = new javax.swing.JTextField();
         loginLabel = new javax.swing.JLabel();
 
@@ -49,7 +123,7 @@ public class Login_Form extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 102, 102));
 
-        jPanel2.setBackground(new java.awt.Color(0, 255, 255));
+        jPanel2.setBackground(new java.awt.Color(0, 84, 140));
         jPanel2.setForeground(new java.awt.Color(153, 153, 153));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -61,16 +135,30 @@ public class Login_Form extends javax.swing.JFrame {
         jPasswordField_Password.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jPasswordField_Password.setForeground(new java.awt.Color(153, 153, 153));
         jPasswordField_Password.setText("Password");
-        jPasswordField_Password.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jPasswordField_PasswordActionPerformed(evt);
+        jPasswordField_Password.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jPasswordField_PasswordFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jPasswordField_PasswordFocusLost(evt);
             }
         });
 
-        jButton1.setText("Login");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButton_Login.setBackground(new java.awt.Color(0, 84, 140));
+        jButton_Login.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_Login.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_Login.setText("Login");
+        jButton_Login.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_LoginMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_LoginMouseExited(evt);
+            }
+        });
+        jButton_Login.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButton_LoginActionPerformed(evt);
             }
         });
 
@@ -102,8 +190,8 @@ public class Login_Form extends javax.swing.JFrame {
                 .addContainerGap(43, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(223, 223, 223))
+                .addComponent(jButton_Login, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(192, 192, 192))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,9 +204,9 @@ public class Login_Form extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jPasswordField_Password, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton_Login, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         loginLabel.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
@@ -138,9 +226,9 @@ public class Login_Form extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+                .addContainerGap(15, Short.MAX_VALUE)
                 .addComponent(loginLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -174,30 +262,33 @@ public class Login_Form extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jPasswordField_PasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField_PasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPasswordField_PasswordActionPerformed
-
-    private void jTextField_UsernameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_UsernameFocusGained
-        // TODO add your handling code here:
+    
+    private void jButton_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_LoginActionPerformed
+        showData();
+    }//GEN-LAST:event_jButton_LoginActionPerformed
+    private void showData() {
         
+        String username = jTextField_Username.getText();
+
+        String password = String.valueOf(jPasswordField_Password.getPassword());
+       
+        try {
+            createFolder();
+            readFile();
+            countLines();
+            logic(username, password);
+        } catch (Exception ex) {}
+    }
+    
+    private void jTextField_UsernameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_UsernameFocusGained
         //clear the textfield on focus if the text is "username"
         if(jTextField_Username.getText().trim().toLowerCase().equals("username")){
             jTextField_Username.setText("");
             jTextField_Username.setForeground(Color.black);
         }
-        
-        
     }//GEN-LAST:event_jTextField_UsernameFocusGained
 
     private void jTextField_UsernameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_UsernameFocusLost
-        // TODO add your handling code here:
-        
         //if the textfield is equal to username or empty
         //we will set the "username" text in the field on focus lost event
         
@@ -207,6 +298,44 @@ public class Login_Form extends javax.swing.JFrame {
             jTextField_Username.setForeground(new Color(153, 153, 153));
         }
     }//GEN-LAST:event_jTextField_UsernameFocusLost
+
+    private void jPasswordField_PasswordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPasswordField_PasswordFocusGained
+      //clear the password field on focus if the text is "password"
+      
+      //get the password text
+      String pass = String.valueOf(jPasswordField_Password.getPassword());
+      
+      if(pass.trim().toLowerCase().equals("password")){
+            jPasswordField_Password.setText("");
+            jPasswordField_Password.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_jPasswordField_PasswordFocusGained
+
+    private void jPasswordField_PasswordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPasswordField_PasswordFocusLost
+       
+        //if the password is equal to passwod or empty
+        //we will set the "password" text in the field on focus lost event
+        
+        //get the password text
+        String pass = String.valueOf(jPasswordField_Password.getPassword());
+        
+        if(pass.trim().equals("")
+                || pass.trim().toLowerCase().equals("password")){
+            jPasswordField_Password.setText("password");
+            jPasswordField_Password.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_jPasswordField_PasswordFocusLost
+
+    private void jButton_LoginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_LoginMouseEntered
+        // set jbutton background
+        jButton_Login.setBackground(new Color(0, 101, 183));
+        
+    }//GEN-LAST:event_jButton_LoginMouseEntered
+
+    private void jButton_LoginMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_LoginMouseExited
+        // set jbutton background
+        jButton_Login.setBackground(new Color(0, 84, 140));
+    }//GEN-LAST:event_jButton_LoginMouseExited
 
     /**
      * @param args the command line arguments
@@ -244,7 +373,7 @@ public class Login_Form extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton_Login;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
