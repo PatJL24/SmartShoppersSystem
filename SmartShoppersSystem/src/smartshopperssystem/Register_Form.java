@@ -5,35 +5,32 @@
 package smartshopperssystem;
 import java.awt.Color;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author patli
  */
 public class Register_Form extends javax.swing.JFrame { 
-    File f = new File("C:\\Files");
+    File dic = new File("C:\\Files");
+    File file = new File("C:\\Files\\logins.txt"); //file path
     int ln;
     
-    private void createFolder(){
-        if(!f.exists()){
-            f.mkdirs();
+    // create folder in which record is save
+    private void createFolder() {
+        if (!dic.isDirectory()) {
+            dic.mkdirs();
         }
     }
     
-    private void readFile(){
-        try {
-            FileReader fr = new FileReader(f+"\\logins.txt");
-        } catch (FileNotFoundException ex) {
+    private void createFile(){
+        if(!file.isFile()){
             try {
-                FileWriter fw = new FileWriter(f+"\\logins.txt");
-            } catch (IOException ex1) {
+                FileWriter fw = new FileWriter(file);
+            } catch (IOException ex) {
+                Logger.getLogger(SmartShoppersSystem.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -41,40 +38,92 @@ public class Register_Form extends javax.swing.JFrame {
     private void countLines(){
         try {
             ln=0;
-            RandomAccessFile raf = new RandomAccessFile(f+"\\logins.txt", "rw");
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
             for(int i=0;raf.readLine()!=null;i++){
                 ln++;
             }
-            System.out.println("number of lines:"+ln);
         } catch (FileNotFoundException ex) {
-           // Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-           // Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
-        }
+         }
     }
     
-    private void addData(String usr, String pswd, String conpswd){
+    private boolean checkUsername(String username) throws FileNotFoundException{
+        Scanner fileScan = new Scanner (file);
+        boolean found = false; // added this variable
+          while (fileScan.hasNextLine()) {
+            String input = fileScan.nextLine();
+            String[] userValues = input.split(",");
+            String Username = userValues[0];
+
+           if (Username.equals(username)) {
+                found = true; // added this to set found
+            } // removed the else statement
+        }
+        return found;
+    }
+    
+    private void addUser(String usr, String pswd, String conpswd, String userType) throws IOException{
         try {
-            RandomAccessFile raf = new RandomAccessFile(f+"\\logins.txt", "rw");
+            //RandomAccessFile raf = new RandomAccessFile(f+"\\logins.txt", "rw");
+         
+            boolean sameUsername = checkUsername(usr);
+            
+            if(sameUsername == true){JOptionPane.showMessageDialog(null, "Username taken. Try again.", "Error Message", 2);}
+           
+             RandomAccessFile raf = new RandomAccessFile(file, "rw");
             for(int i=0;i<ln;i++){
                 raf.readLine();
             }
             //if condition added after video to have no lines on first entry
             if(ln>0){
                 raf.writeBytes("\r\n");
-                raf.writeBytes("\r\n");
             }
-           
-            raf.writeBytes("Password:"+pswd+ "\r\n");
-            raf.writeBytes("Username:"+usr+ "\r\n");
-            raf.writeBytes("Country:"+conpswd+ "\r\n");
+            raf.writeBytes(usr+ ",");
+            raf.writeBytes(pswd+ ",");
+            raf.writeBytes(userType + "\r\n");
             
+            
+            JOptionPane.showMessageDialog(null, "Register Successful!", "Registered", 2);
         } catch (FileNotFoundException ex) {
             //Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            //Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private boolean verifyFields(String userName, String password, String confirmPass, String userType){
+        
+        if(userName.trim().equals("") || password.trim().equals("") 
+                || confirmPass.trim().equals("") || userType.equals("None")){
+            JOptionPane.showMessageDialog(null, "One or more fields are empty", "Missing Fields", 2);
+            return false;
         }
         
+        
+        //check if two passwords are equals
+        else if(!password.equals(confirmPass)){
+            JOptionPane.showMessageDialog(null, "Passwords do not match", "Confirm Passwords", 2);
+            return false;
+        }
+        
+        //if everything is okay
+        else{
+            return true;
+        }
+    }
+    
+    private void showData() {
+        
+        String username = jTextField_Username.getText();
+        String password = String.valueOf(jPasswordField_Password.getPassword());
+        String confirmPassword = String.valueOf(jPasswordField_ConfirmPass.getPassword());  
+        String userType = jComboBox_Accounts.getSelectedItem().toString();
+        
+        try {
+            createFolder();
+            createFile();
+            countLines();
+            if(verifyFields(username, password, confirmPassword, userType) == true){
+            addUser(username, password, confirmPassword, userType);}
+        } catch (IOException ex) {}
     }
     
     /**
@@ -123,16 +172,6 @@ public class Register_Form extends javax.swing.JFrame {
         jLabel2.setText("Password:");
 
         jPasswordField_Password.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jPasswordField_Password.setForeground(new java.awt.Color(153, 153, 153));
-        jPasswordField_Password.setText("Password");
-        jPasswordField_Password.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jPasswordField_PasswordFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jPasswordField_PasswordFocusLost(evt);
-            }
-        });
 
         jButton_Back.setBackground(new java.awt.Color(255, 0, 0));
         jButton_Back.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -153,16 +192,6 @@ public class Register_Form extends javax.swing.JFrame {
         });
 
         jTextField_Username.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jTextField_Username.setForeground(new java.awt.Color(153, 153, 153));
-        jTextField_Username.setText("Username");
-        jTextField_Username.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextField_UsernameFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextField_UsernameFocusLost(evt);
-            }
-        });
 
         jButton_Register.setBackground(new java.awt.Color(255, 0, 0));
         jButton_Register.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -204,18 +233,13 @@ public class Register_Form extends javax.swing.JFrame {
         jLabel3.setText("Confirm Password:");
 
         jPasswordField_ConfirmPass.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jPasswordField_ConfirmPass.setForeground(new java.awt.Color(153, 153, 153));
-        jPasswordField_ConfirmPass.setText("Password");
-        jPasswordField_ConfirmPass.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jPasswordField_ConfirmPassFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jPasswordField_ConfirmPassFocusLost(evt);
+
+        jComboBox_Accounts.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Customer", "Manager", "Administrator" }));
+        jComboBox_Accounts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox_AccountsActionPerformed(evt);
             }
         });
-
-        jComboBox_Accounts.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Customer", "Manager", "Administrator" }));
 
         jLabel4.setText("Account Type:");
 
@@ -228,9 +252,7 @@ public class Register_Form extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(0, 0, 0)
-                                .addComponent(jLabel2))
+                            .addComponent(jLabel2)
                             .addComponent(jLabel1))
                         .addGap(50, 50, 50)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -327,39 +349,11 @@ public class Register_Form extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jPasswordField_ConfirmPassFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPasswordField_ConfirmPassFocusLost
-         //if the password is equal to passwod or empty
-        //we will set the "password" text in the field on focus lost event
-
-        //get the password text
-        String pass = String.valueOf(jPasswordField_ConfirmPass.getPassword());
-
-        if(pass.trim().equals("")
-            || pass.trim().toLowerCase().equals("password")){
-            jPasswordField_ConfirmPass.setText("password");
-            jPasswordField_ConfirmPass.setForeground(new Color(153, 153, 153));
-        }
-    }//GEN-LAST:event_jPasswordField_ConfirmPassFocusLost
-
-    private void jPasswordField_ConfirmPassFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPasswordField_ConfirmPassFocusGained
-        //clear the password field on focus if the text is "password"
-
-        //get the password text
-        String pass = String.valueOf(jPasswordField_ConfirmPass.getPassword());
-
-        if(pass.trim().toLowerCase().equals("password")){
-            jPasswordField_ConfirmPass.setText("");
-            jPasswordField_ConfirmPass.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_jPasswordField_ConfirmPassFocusGained
-
     private void jButton_ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ResetActionPerformed
-         jPasswordField_Password.setText("password");
-         jPasswordField_Password.setForeground(new Color(153, 153, 153));
-         jPasswordField_ConfirmPass.setText("password");
-         jPasswordField_ConfirmPass.setForeground(new Color(153, 153, 153));
-         jTextField_Username.setText("username");
-         jTextField_Username.setForeground(new Color(153, 153, 153));
+         jPasswordField_Password.setText("");
+         jPasswordField_ConfirmPass.setText("");
+         jTextField_Username.setText("");
+         jComboBox_Accounts.setSelectedIndex(0);
     }//GEN-LAST:event_jButton_ResetActionPerformed
 
     private void jButton_ResetMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_ResetMouseExited
@@ -373,9 +367,10 @@ public class Register_Form extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_ResetMouseEntered
 
     private void jButton_RegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_RegisterActionPerformed
-        // TODO add your handling code here:
+         showData();
     }//GEN-LAST:event_jButton_RegisterActionPerformed
 
+    
     private void jButton_RegisterMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_RegisterMouseExited
         // set jbutton background
         jButton_Register.setBackground(new Color(255, 0, 0));
@@ -386,27 +381,13 @@ public class Register_Form extends javax.swing.JFrame {
         jButton_Register.setBackground(new Color(225, 100, 2));
     }//GEN-LAST:event_jButton_RegisterMouseEntered
 
-    private void jTextField_UsernameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_UsernameFocusLost
-        //if the textfield is equal to username or empty
-        //we will set the "username" text in the field on focus lost event
-
-        if(jTextField_Username.getText().trim().equals("")
-            || jTextField_Username.getText().trim().toLowerCase().equals("username")){
-            jTextField_Username.setText("username");
-            jTextField_Username.setForeground(new Color(153, 153, 153));
-        }
-    }//GEN-LAST:event_jTextField_UsernameFocusLost
-
-    private void jTextField_UsernameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_UsernameFocusGained
-        //clear the textfield on focus if the text is "username"
-        if(jTextField_Username.getText().trim().toLowerCase().equals("username")){
-            jTextField_Username.setText("");
-            jTextField_Username.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_jTextField_UsernameFocusGained
-
     private void jButton_BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_BackActionPerformed
-        
+        //calls the login form
+        SmartShoppersSystem login = new SmartShoppersSystem();
+        login.setVisible(true);
+        login.pack();
+        login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.dispose();
     }//GEN-LAST:event_jButton_BackActionPerformed
 
     private void jButton_BackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_BackMouseExited
@@ -419,54 +400,10 @@ public class Register_Form extends javax.swing.JFrame {
         jButton_Back.setBackground(new Color(225, 100, 2));
     }//GEN-LAST:event_jButton_BackMouseEntered
 
-    private void jPasswordField_PasswordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPasswordField_PasswordFocusLost
+    private void jComboBox_AccountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_AccountsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox_AccountsActionPerformed
 
-        //if the password is equal to passwod or empty
-        //we will set the "password" text in the field on focus lost event
-
-        //get the password text
-        String pass = String.valueOf(jPasswordField_Password.getPassword());
-
-        if(pass.trim().equals("")
-            || pass.trim().toLowerCase().equals("password")){
-            jPasswordField_Password.setText("password");
-            jPasswordField_Password.setForeground(new Color(153, 153, 153));
-        }
-    }//GEN-LAST:event_jPasswordField_PasswordFocusLost
-
-    private void jPasswordField_PasswordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPasswordField_PasswordFocusGained
-        //clear the password field on focus if the text is "password"
-
-        //get the password text
-        String pass = String.valueOf(jPasswordField_Password.getPassword());
-
-        if(pass.trim().toLowerCase().equals("password")){
-            jPasswordField_Password.setText("");
-            jPasswordField_Password.setForeground(Color.black);
-        }
-    }//GEN-LAST:event_jPasswordField_PasswordFocusGained
-
-    private boolean verifyFields(){
-        String userName = jTextField_Username.getText();
-        String password = String.valueOf(jPasswordField_Password.getPassword());
-        String confirmPass = String.valueOf(jPasswordField_ConfirmPass.getPassword());
-        
-        if(userName.trim().equals("") || password.trim().equals("") || confirmPass.trim().equals("")){
-            JOptionPane.showMessageDialog(null, "One or more fields are empty", "Missing Fields", 2);
-            return false;
-        }
-        
-        //check if two passwords are equals
-        else if(!password.equals(confirmPass)){
-            JOptionPane.showMessageDialog(null, "Passwords do not match", "Confirm Passwords", 2);
-            return false;
-        }
-        
-        //if everything is okay
-        else{
-            return true;
-        }
-    }
     
     //create a function to check if the entered username already exists in the database.
     
