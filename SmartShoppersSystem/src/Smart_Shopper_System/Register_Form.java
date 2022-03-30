@@ -1,0 +1,487 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package Smart_Shopper_System;
+import com.csvreader.CsvWriter;
+import java.awt.Color;
+import javax.swing.*;
+import java.io.*;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+/**
+ *
+ * @author patli
+ */
+public class Register_Form extends javax.swing.JFrame { 
+    File dic = new File("C:\\SmartShoppersSystem");   //directory file path
+    //File file = new File("C:\\SmartShoppersSystem\\logins.txt"); //file path
+    String path = "C:\\SmartShoppersSystem\\logins.csv";
+    File file = new File(path);
+    MaintainUser maintain = new MaintainUser();
+    User newUser;
+    
+    int ln;
+    
+    // create folder in which record is save
+    private void createFolder() {
+        if (!dic.isDirectory()) {
+            dic.mkdirs();
+        }
+    }
+    
+    private void createFile(){
+        if(!file.isFile()){
+            try {
+                FileWriter fw = new FileWriter(file);
+            } catch (IOException ex) {
+                Logger.getLogger(Smart_Shoppers_System.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void countLines(){
+        try {
+            ln=0;
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+            for(int i=0;raf.readLine()!=null;i++){
+                ln++;
+            }
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+         }
+    }
+    
+    private boolean checkUsername(String username) throws FileNotFoundException{
+        Scanner fileScan = new Scanner(file);
+        boolean found = false; // added this variable
+          while (fileScan.hasNextLine()) {
+            String input = fileScan.nextLine();
+            String[] userValues = input.split(",");
+            String Username = userValues[0];
+
+           if (Username.equals(username)) {
+                found = true; // added this to set found
+            } // removed the else statement
+        }
+        return found;
+    }
+    
+    private void addUser(String usr, String pswd, String userType, String email, String path) throws IOException, Exception{
+        try {     
+            boolean sameUsername = checkUsername(usr);
+            
+            if(sameUsername == false){
+                newUser = new User(usr, pswd, userType, email);
+                
+                maintain.users.add(newUser);
+
+                maintain.update(path); 
+
+                JOptionPane.showMessageDialog(null, "Register Successful!", "Registered", 2);
+            }
+            else{
+               JOptionPane.showMessageDialog(null, "Username taken. Try again.", "Error Message", 2);
+            }
+        } catch (FileNotFoundException ex) {
+            //Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private boolean verifyFields(String userName, String password, String confirmPass, 
+            String userType, String email){
+        
+        if(userName.trim().equals("") || password.trim().equals("") 
+                || confirmPass.trim().equals("") || userType.equals("None") || email.equals("")){
+            JOptionPane.showMessageDialog(null, "One or more fields are empty", "Missing Fields", 2);
+            return false;
+        }
+        
+        
+        //check if two passwords are equals
+        else if(!password.equals(confirmPass)){
+            JOptionPane.showMessageDialog(null, "Passwords do not match", "Confirm Passwords", 2);
+            return false;
+        }
+        
+        //if everything is okay
+        else{
+            return true;
+        }
+    }
+    
+    private void register() throws Exception {
+        
+        String username = jTextField_Username.getText();
+        String password = String.valueOf(jPasswordField_Password.getPassword());
+        String confirmPassword = String.valueOf(jPasswordField_ConfirmPass.getPassword());  
+        String userType = jComboBox_Accounts.getSelectedItem().toString();
+        String email = jTextField_Email.getText();
+        
+        try {
+            createFolder();
+            createFile();
+            countLines();
+            if(verifyFields(username, password, confirmPassword, userType, email) == true){
+                //Need to switch to csv file
+                addUser(username, password, userType, email, path);
+            }
+        } catch (IOException ex) {}
+    }
+    
+    /**
+     * Creates new form Register_form
+     */
+    public Register_Form() {
+        initComponents();
+        
+        //center the form
+        this.setLocationRelativeTo(null);
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jPasswordField_Password = new javax.swing.JPasswordField();
+        jButton_Back = new javax.swing.JButton();
+        jTextField_Username = new javax.swing.JTextField();
+        jButton_Register = new javax.swing.JButton();
+        jButton_Reset = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jPasswordField_ConfirmPass = new javax.swing.JPasswordField();
+        jComboBox_Accounts = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField_Email = new javax.swing.JTextField();
+        loginLabel = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel2.setBackground(new java.awt.Color(255, 0, 0));
+        jPanel2.setForeground(new java.awt.Color(153, 153, 153));
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setText("Username:");
+
+        jLabel2.setText("Password:");
+
+        jPasswordField_Password.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+
+        jButton_Back.setBackground(new java.awt.Color(255, 0, 0));
+        jButton_Back.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_Back.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_Back.setText("Back to Login");
+        jButton_Back.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_BackMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_BackMouseExited(evt);
+            }
+        });
+        jButton_Back.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_BackActionPerformed(evt);
+            }
+        });
+
+        jTextField_Username.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+
+        jButton_Register.setBackground(new java.awt.Color(255, 0, 0));
+        jButton_Register.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_Register.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_Register.setText("Register");
+        jButton_Register.setMaximumSize(new java.awt.Dimension(100, 28));
+        jButton_Register.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_RegisterMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_RegisterMouseExited(evt);
+            }
+        });
+        jButton_Register.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_RegisterActionPerformed(evt);
+            }
+        });
+
+        jButton_Reset.setBackground(new java.awt.Color(255, 0, 0));
+        jButton_Reset.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_Reset.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_Reset.setText("Reset");
+        jButton_Reset.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_ResetMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_ResetMouseExited(evt);
+            }
+        });
+        jButton_Reset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_ResetActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Confirm Password:");
+
+        jPasswordField_ConfirmPass.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+
+        jComboBox_Accounts.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Customer", "Manager", "Administrator" }));
+        jComboBox_Accounts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox_AccountsActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Account Type:");
+
+        jLabel5.setText("Email:");
+
+        jTextField_Email.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(50, 50, 50)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField_Username, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPasswordField_Password, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(jButton_Back)
+                        .addGap(32, 32, 32)
+                        .addComponent(jButton_Reset, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton_Register, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPasswordField_ConfirmPass))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jComboBox_Accounts, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTextField_Email, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 38, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jTextField_Username, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jPasswordField_Password, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jPasswordField_ConfirmPass, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField_Email, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jComboBox_Accounts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton_Reset, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton_Register, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton_Back, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14))
+        );
+
+        loginLabel.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
+        loginLabel.setForeground(new java.awt.Color(255, 255, 255));
+        loginLabel.setText("Register");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(180, 180, 180)
+                .addComponent(loginLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(loginLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton_ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ResetActionPerformed
+         jPasswordField_Password.setText("");
+         jPasswordField_ConfirmPass.setText("");
+         jTextField_Username.setText("");
+         jTextField_Email.setText("");
+         jComboBox_Accounts.setSelectedIndex(0);
+    }//GEN-LAST:event_jButton_ResetActionPerformed
+
+    private void jButton_ResetMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_ResetMouseExited
+        // set jbutton background
+        jButton_Reset.setBackground(new Color(255, 0, 0));
+    }//GEN-LAST:event_jButton_ResetMouseExited
+
+    private void jButton_ResetMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_ResetMouseEntered
+        // set jbutton background
+        jButton_Reset.setBackground(new Color(225, 100, 2));
+    }//GEN-LAST:event_jButton_ResetMouseEntered
+
+    private void jButton_RegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_RegisterActionPerformed
+        try {
+            register();
+        } catch (Exception ex) {
+            Logger.getLogger(Register_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton_RegisterActionPerformed
+
+    
+    private void jButton_RegisterMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_RegisterMouseExited
+        // set jbutton background
+        jButton_Register.setBackground(new Color(255, 0, 0));
+    }//GEN-LAST:event_jButton_RegisterMouseExited
+
+    private void jButton_RegisterMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_RegisterMouseEntered
+        // set jbutton background
+        jButton_Register.setBackground(new Color(225, 100, 2));
+    }//GEN-LAST:event_jButton_RegisterMouseEntered
+
+    private void jButton_BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_BackActionPerformed
+        //calls the login form
+        Smart_Shoppers_System login = new Smart_Shoppers_System();
+        login.setVisible(true);
+        login.pack();
+        login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.dispose();
+    }//GEN-LAST:event_jButton_BackActionPerformed
+
+    private void jButton_BackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_BackMouseExited
+        // set jbutton background
+        jButton_Back.setBackground(new Color(255, 0, 0));
+    }//GEN-LAST:event_jButton_BackMouseExited
+
+    private void jButton_BackMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_BackMouseEntered
+        // set jbutton background
+        jButton_Back.setBackground(new Color(225, 100, 2));
+    }//GEN-LAST:event_jButton_BackMouseEntered
+
+    private void jComboBox_AccountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_AccountsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox_AccountsActionPerformed
+
+    
+    //create a function to check if the entered username already exists in the database.
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Register_Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Register_Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Register_Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Register_Form.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Register_Form().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton_Back;
+    private javax.swing.JButton jButton_Register;
+    private javax.swing.JButton jButton_Reset;
+    private javax.swing.JComboBox<String> jComboBox_Accounts;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPasswordField jPasswordField_ConfirmPass;
+    private javax.swing.JPasswordField jPasswordField_Password;
+    private javax.swing.JTextField jTextField_Email;
+    private javax.swing.JTextField jTextField_Username;
+    private javax.swing.JLabel loginLabel;
+    // End of variables declaration//GEN-END:variables
+}
