@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Smart_Shopper_System;
-import com.csvreader.CsvWriter;
 import java.awt.Color;
 import javax.swing.*;
 import java.io.*;
@@ -16,13 +15,10 @@ import java.util.logging.Logger;
  */
 public class Register_Form extends javax.swing.JFrame { 
     File dic = new File("C:\\SmartShoppersSystem");   //directory file path
-    //File file = new File("C:\\SmartShoppersSystem\\logins.txt"); //file path
     String path = "C:\\SmartShoppersSystem\\logins.csv";
     File file = new File(path);
-    MaintainUser maintain = new MaintainUser();
+    Maintain_Users maintain = new Maintain_Users();
     User newUser;
-    
-    int ln;
     
     // create folder in which record is save
     private void createFolder() {
@@ -32,6 +28,7 @@ public class Register_Form extends javax.swing.JFrame {
     }
     
     private void createFile(){
+        createFolder();
         if(!file.isFile()){
             try {
                 FileWriter fw = new FileWriter(file);
@@ -39,18 +36,6 @@ public class Register_Form extends javax.swing.JFrame {
                 Logger.getLogger(Smart_Shoppers_System.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-    
-    private void countLines(){
-        try {
-            ln=0;
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            for(int i=0;raf.readLine()!=null;i++){
-                ln++;
-            }
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-         }
     }
     
     private boolean checkUsername(String username) throws FileNotFoundException{
@@ -68,12 +53,17 @@ public class Register_Form extends javax.swing.JFrame {
         return found;
     }
     
-    private void addUser(String usr, String pswd, String userType, String email, String path) throws IOException, Exception{
+    private void addUser(String usr, String pswd, String userType,
+            String firstName, String lastName, String street, String postalCode, 
+            String city, String country, String path) throws IOException, Exception{
         try {     
             boolean sameUsername = checkUsername(usr);
             
             if(sameUsername == false){
-                newUser = new User(usr, pswd, userType, email);
+                maintain.load(path);
+                
+                newUser = new User(usr, pswd, userType, firstName, lastName, street, postalCode,
+                city, country);
                 
                 maintain.users.add(newUser);
 
@@ -90,10 +80,14 @@ public class Register_Form extends javax.swing.JFrame {
     }
     
     private boolean verifyFields(String userName, String password, String confirmPass, 
-            String userType, String email){
+        String userType,String firstName, String lastName, 
+        String street, String postalCode, String city, String country){
         
         if(userName.trim().equals("") || password.trim().equals("") 
-                || confirmPass.trim().equals("") || userType.equals("None") || email.equals("")){
+                || confirmPass.trim().equals("") || userType.equals("None")
+                || firstName.trim().equals("") || lastName.trim().equals("") 
+                || street.trim().equals("")|| postalCode.trim().equals("")|| city.trim().equals("") || 
+                country.trim().equals("")){
             JOptionPane.showMessageDialog(null, "One or more fields are empty", "Missing Fields", 2);
             return false;
         }
@@ -112,20 +106,25 @@ public class Register_Form extends javax.swing.JFrame {
     }
     
     private void register() throws Exception {
-        
+       
         String username = jTextField_Username.getText();
         String password = String.valueOf(jPasswordField_Password.getPassword());
         String confirmPassword = String.valueOf(jPasswordField_ConfirmPass.getPassword());  
-        String userType = jComboBox_Accounts.getSelectedItem().toString();
-        String email = jTextField_Email.getText();
+        String userType = "Customer";
+        String firstName = jTextField_FirstName.getText();
+        String lastName = jTextField_LastName.getText();
+        String street = jTextField_Street.getText();
+        String postalCode = jTextField_PostalCode.getText();
+        String city = jTextField_City.getText();
+        String country = jTextField_Country.getText();
         
         try {
-            createFolder();
             createFile();
-            countLines();
-            if(verifyFields(username, password, confirmPassword, userType, email) == true){
+            if(verifyFields(username, password, confirmPassword, userType, firstName, lastName
+            ,street, postalCode, city, country) == true){
                 //Need to switch to csv file
-                addUser(username, password, userType, email, path);
+                addUser(username, password, userType, firstName, 
+                        lastName, street, postalCode, city, country, path);
             }
         } catch (IOException ex) {}
     }
@@ -160,10 +159,19 @@ public class Register_Form extends javax.swing.JFrame {
         jButton_Reset = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jPasswordField_ConfirmPass = new javax.swing.JPasswordField();
-        jComboBox_Accounts = new javax.swing.JComboBox<>();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jTextField_Email = new javax.swing.JTextField();
+        jTextField_FirstName = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField_LastName = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jTextField_Street = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jTextField_PostalCode = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jTextField_Country = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jTextField_City = new javax.swing.JTextField();
         loginLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -176,8 +184,6 @@ public class Register_Form extends javax.swing.JFrame {
         jLabel1.setText("Username:");
 
         jLabel2.setText("Password:");
-
-        jPasswordField_Password.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
 
         jButton_Back.setBackground(new java.awt.Color(255, 0, 0));
         jButton_Back.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -196,8 +202,6 @@ public class Register_Form extends javax.swing.JFrame {
                 jButton_BackActionPerformed(evt);
             }
         });
-
-        jTextField_Username.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
 
         jButton_Register.setBackground(new java.awt.Color(255, 0, 0));
         jButton_Register.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -238,86 +242,150 @@ public class Register_Form extends javax.swing.JFrame {
 
         jLabel3.setText("Confirm Password:");
 
-        jPasswordField_ConfirmPass.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-
-        jComboBox_Accounts.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Customer", "Manager", "Administrator" }));
-        jComboBox_Accounts.addActionListener(new java.awt.event.ActionListener() {
+        jTextField_FirstName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox_AccountsActionPerformed(evt);
+                jTextField_FirstNameActionPerformed(evt);
             }
         });
 
-        jLabel4.setText("Account Type:");
+        jLabel6.setText("Last Name:");
 
-        jLabel5.setText("Email:");
+        jTextField_LastName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField_LastNameActionPerformed(evt);
+            }
+        });
 
-        jTextField_Email.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jLabel7.setText("First Name:");
+
+        jLabel8.setText("Street Name & #:");
+
+        jLabel9.setText("Postal Code:");
+
+        jTextField_PostalCode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField_PostalCodeActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setText("Country:");
+
+        jLabel12.setText("City:");
+
+        jTextField_City.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField_CityActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel7))
+                                .addGap(46, 46, 46)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField_FirstName)
+                                    .addComponent(jTextField_LastName)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addGap(14, 14, 14)
+                                        .addComponent(jTextField_Street, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel11)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextField_Country, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel12))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField_City)
+                                    .addComponent(jTextField_PostalCode))))
+                        .addGap(24, 24, 24))
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jButton_Back)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton_Reset, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton_Register, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addGap(50, 50, 50)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField_Username, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPasswordField_Password, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jButton_Back)
-                        .addGap(32, 32, 32)
-                        .addComponent(jButton_Reset, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton_Register, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPasswordField_ConfirmPass))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jComboBox_Accounts, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextField_Email, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 38, Short.MAX_VALUE))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField_Username, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPasswordField_Password)
+                            .addComponent(jPasswordField_ConfirmPass))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addComponent(jLabel10)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel10)
+                .addGap(299, 299, 299))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextField_Username, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField_FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jPasswordField_Password, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField_LastName, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel8)
+                        .addComponent(jLabel9)
+                        .addComponent(jTextField_PostalCode, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField_Street, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel12)
+                        .addComponent(jLabel11))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField_Country, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField_City, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField_Username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jPasswordField_Password, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jPasswordField_ConfirmPass, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField_Email, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jComboBox_Accounts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPasswordField_ConfirmPass, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton_Back, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton_Reset, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton_Register, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton_Back, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+                    .addComponent(jButton_Register, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(54, 54, 54))
         );
 
         loginLabel.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
@@ -329,13 +397,14 @@ public class Register_Form extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(180, 180, 180)
-                .addComponent(loginLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(180, 180, 180)
+                        .addComponent(loginLabel))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -343,8 +412,8 @@ public class Register_Form extends javax.swing.JFrame {
                 .addGap(10, 10, 10)
                 .addComponent(loginLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -360,19 +429,31 @@ public class Register_Form extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jTextField_LastNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_LastNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField_LastNameActionPerformed
+
+    private void jTextField_FirstNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_FirstNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField_FirstNameActionPerformed
+
     private void jButton_ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ResetActionPerformed
-         jPasswordField_Password.setText("");
-         jPasswordField_ConfirmPass.setText("");
-         jTextField_Username.setText("");
-         jTextField_Email.setText("");
-         jComboBox_Accounts.setSelectedIndex(0);
+        jPasswordField_Password.setText("");
+        jPasswordField_ConfirmPass.setText("");
+        jTextField_Username.setText("");
+        jTextField_FirstName.setText("");
+        jTextField_LastName.setText("");
+        jTextField_Street.setText("");
+        jTextField_PostalCode.setText("");
+        jTextField_City.setText("");
+        jTextField_Country.setText("");
     }//GEN-LAST:event_jButton_ResetActionPerformed
 
     private void jButton_ResetMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_ResetMouseExited
@@ -393,7 +474,6 @@ public class Register_Form extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton_RegisterActionPerformed
 
-    
     private void jButton_RegisterMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_RegisterMouseExited
         // set jbutton background
         jButton_Register.setBackground(new Color(255, 0, 0));
@@ -423,10 +503,15 @@ public class Register_Form extends javax.swing.JFrame {
         jButton_Back.setBackground(new Color(225, 100, 2));
     }//GEN-LAST:event_jButton_BackMouseEntered
 
-    private void jComboBox_AccountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_AccountsActionPerformed
+    private void jTextField_PostalCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_PostalCodeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox_AccountsActionPerformed
+    }//GEN-LAST:event_jTextField_PostalCodeActionPerformed
 
+    private void jTextField_CityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_CityActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField_CityActionPerformed
+
+    
     
     //create a function to check if the entered username already exists in the database.
     
@@ -470,17 +555,26 @@ public class Register_Form extends javax.swing.JFrame {
     private javax.swing.JButton jButton_Back;
     private javax.swing.JButton jButton_Register;
     private javax.swing.JButton jButton_Reset;
-    private javax.swing.JComboBox<String> jComboBox_Accounts;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPasswordField jPasswordField_ConfirmPass;
     private javax.swing.JPasswordField jPasswordField_Password;
-    private javax.swing.JTextField jTextField_Email;
+    private javax.swing.JTextField jTextField_City;
+    private javax.swing.JTextField jTextField_Country;
+    private javax.swing.JTextField jTextField_FirstName;
+    private javax.swing.JTextField jTextField_LastName;
+    private javax.swing.JTextField jTextField_PostalCode;
+    private javax.swing.JTextField jTextField_Street;
     private javax.swing.JTextField jTextField_Username;
     private javax.swing.JLabel loginLabel;
     // End of variables declaration//GEN-END:variables

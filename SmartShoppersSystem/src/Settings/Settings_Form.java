@@ -4,37 +4,67 @@
  */
 package Settings;
 
-import java.awt.Color;
-import javax.swing.JFrame;
+import Smart_Shopper_System.Maintain_Users;
+import Smart_Shopper_System.Smart_Shoppers_System;
+import Smart_Shopper_System.User;
 import User_Interfaces.Customer_Form;
+import java.awt.Color;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author patli
  */
-public class Settings_Form extends javax.swing.JFrame{
-    
+public class Settings_Form extends javax.swing.JFrame {
+
     String username;
-    String userType;
     String password;
+    String userType;
+    String firstName;
+    String lastName;
+    String street;
+    String country;
+    String city;
+    String PostalCode;
     
-    public void setUsername(String username){
-        this.username = username;
+    String loginFilePath = "C:\\SmartShoppersSystem\\logins.csv";
+    File loginFile = new File(loginFilePath);
+    
+    User currentUser;
+    
+    
+    public void getUser(User user){
+        this.currentUser = user;
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.userType = user.getUserType();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.street = user.getStreet();
+        this.country = user.getCountry();
+        this.city = user.getCity();
+        this.PostalCode = user.getPostalCode();
     }
     
-    public void getUserType(String userType){
-        this.userType = userType;
-    }
-    
-    public void getPassword(String password){
-        this.password  = password;
+    // create folder in which record is save
+    private void createFolder(File dic) {
+        if (!dic.isDirectory()) {
+            dic.mkdirs();
+        }
     }
     
     /**
-     * Creates new form Account_Interface
+     * Creates new form Change_Password
      */
     public Settings_Form() {
         initComponents();
+        //center the form
         this.setLocationRelativeTo(null);
     }
 
@@ -49,128 +79,208 @@ public class Settings_Form extends javax.swing.JFrame{
 
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jButton_Cuser = new javax.swing.JButton();
-        jButton_Rpersonal = new javax.swing.JButton();
-        jButton_Cpswd = new javax.swing.JButton();
-        jButton_Back = new javax.swing.JButton();
-        jButton_security = new javax.swing.JButton();
-        jButton_Daccount = new javax.swing.JButton();
+        jButton_UpdateNames = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jPasswordField_New = new javax.swing.JPasswordField();
+        jPasswordField_Old = new javax.swing.JPasswordField();
+        jButton_Close = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jPasswordField_ConfirmNew = new javax.swing.JPasswordField();
+        jLabel4 = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        jTextField_FirstName = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField_LastName = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField_Username = new javax.swing.JTextField();
+        jButton_UpdatePassword = new javax.swing.JButton();
+        jButton_UpdateUsername = new javax.swing.JButton();
+        jButton_UpdateAddress = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        jButton_DeleteAccount = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jButton_RequestInfo = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField_PostalCode = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jTextField_Country = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jTextField_City = new javax.swing.JTextField();
+        jTextField_Street = new javax.swing.JTextField();
         loginLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel2.setBackground(new java.awt.Color(0, 153, 153));
+        jPanel2.setBackground(new java.awt.Color(0, 204, 204));
         jPanel2.setForeground(new java.awt.Color(153, 153, 153));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
-        jButton_Cuser.setBackground(new java.awt.Color(0, 153, 153));
-        jButton_Cuser.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButton_Cuser.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_Cuser.setText("Change Username");
-        jButton_Cuser.addMouseListener(new java.awt.event.MouseAdapter() {
+        jButton_UpdateNames.setBackground(new java.awt.Color(0, 204, 204));
+        jButton_UpdateNames.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_UpdateNames.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_UpdateNames.setText("Update Names");
+        jButton_UpdateNames.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_CuserMouseEntered(evt);
+                jButton_UpdateNamesMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_CuserMouseExited(evt);
+                jButton_UpdateNamesMouseExited(evt);
             }
         });
-        jButton_Cuser.addActionListener(new java.awt.event.ActionListener() {
+        jButton_UpdateNames.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_CuserActionPerformed(evt);
+                jButton_UpdateNamesActionPerformed(evt);
             }
         });
 
-        jButton_Rpersonal.setBackground(new java.awt.Color(0, 153, 153));
-        jButton_Rpersonal.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButton_Rpersonal.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_Rpersonal.setText("Request for Personal Info");
-        jButton_Rpersonal.setMaximumSize(new java.awt.Dimension(100, 28));
-        jButton_Rpersonal.addMouseListener(new java.awt.event.MouseAdapter() {
+        jLabel1.setText("New Password:");
+
+        jLabel2.setText("Old Password:");
+
+        jButton_Close.setBackground(new java.awt.Color(0, 204, 204));
+        jButton_Close.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_Close.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_Close.setText("Close");
+        jButton_Close.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_RpersonalMouseEntered(evt);
+                jButton_CloseMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_RpersonalMouseExited(evt);
+                jButton_CloseMouseExited(evt);
             }
         });
-        jButton_Rpersonal.addActionListener(new java.awt.event.ActionListener() {
+        jButton_Close.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_RpersonalActionPerformed(evt);
+                jButton_CloseActionPerformed(evt);
             }
         });
 
-        jButton_Cpswd.setBackground(new java.awt.Color(0, 153, 153));
-        jButton_Cpswd.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButton_Cpswd.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_Cpswd.setText("Change Password");
-        jButton_Cpswd.addMouseListener(new java.awt.event.MouseAdapter() {
+        jLabel3.setText("Confirm New Password:");
+
+        jLabel4.setText("First Name:");
+
+        jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
+
+        jLabel5.setText("Last Name:");
+
+        jLabel6.setText("Username:");
+
+        jButton_UpdatePassword.setBackground(new java.awt.Color(0, 204, 204));
+        jButton_UpdatePassword.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_UpdatePassword.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_UpdatePassword.setText("Update Password");
+        jButton_UpdatePassword.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_CpswdMouseEntered(evt);
+                jButton_UpdatePasswordMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_CpswdMouseExited(evt);
+                jButton_UpdatePasswordMouseExited(evt);
             }
         });
-        jButton_Cpswd.addActionListener(new java.awt.event.ActionListener() {
+        jButton_UpdatePassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_CpswdActionPerformed(evt);
+                jButton_UpdatePasswordActionPerformed(evt);
             }
         });
 
-        jButton_Back.setBackground(new java.awt.Color(0, 153, 153));
-        jButton_Back.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButton_Back.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_Back.setText("Back");
-        jButton_Back.addMouseListener(new java.awt.event.MouseAdapter() {
+        jButton_UpdateUsername.setBackground(new java.awt.Color(0, 204, 204));
+        jButton_UpdateUsername.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_UpdateUsername.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_UpdateUsername.setText("Update Username");
+        jButton_UpdateUsername.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_BackMouseEntered(evt);
+                jButton_UpdateUsernameMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_BackMouseExited(evt);
+                jButton_UpdateUsernameMouseExited(evt);
             }
         });
-        jButton_Back.addActionListener(new java.awt.event.ActionListener() {
+        jButton_UpdateUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_BackActionPerformed(evt);
+                jButton_UpdateUsernameActionPerformed(evt);
             }
         });
 
-        jButton_security.setBackground(new java.awt.Color(0, 153, 153));
-        jButton_security.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButton_security.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_security.setText("Security Methods");
-        jButton_security.addMouseListener(new java.awt.event.MouseAdapter() {
+        jButton_UpdateAddress.setBackground(new java.awt.Color(0, 204, 204));
+        jButton_UpdateAddress.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_UpdateAddress.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_UpdateAddress.setText("Update Address");
+        jButton_UpdateAddress.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_securityMouseEntered(evt);
+                jButton_UpdateAddressMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_securityMouseExited(evt);
+                jButton_UpdateAddressMouseExited(evt);
             }
         });
-        jButton_security.addActionListener(new java.awt.event.ActionListener() {
+        jButton_UpdateAddress.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_securityActionPerformed(evt);
+                jButton_UpdateAddressActionPerformed(evt);
             }
         });
 
-        jButton_Daccount.setBackground(new java.awt.Color(0, 153, 153));
-        jButton_Daccount.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButton_Daccount.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_Daccount.setText("Delete Account");
-        jButton_Daccount.setMaximumSize(new java.awt.Dimension(100, 28));
-        jButton_Daccount.addMouseListener(new java.awt.event.MouseAdapter() {
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel8.setText("Delete Account:");
+
+        jButton_DeleteAccount.setBackground(new java.awt.Color(0, 204, 204));
+        jButton_DeleteAccount.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_DeleteAccount.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_DeleteAccount.setText("Delete Account");
+        jButton_DeleteAccount.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_DaccountMouseEntered(evt);
+                jButton_DeleteAccountMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_DaccountMouseExited(evt);
+                jButton_DeleteAccountMouseExited(evt);
             }
         });
-        jButton_Daccount.addActionListener(new java.awt.event.ActionListener() {
+        jButton_DeleteAccount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_DaccountActionPerformed(evt);
+                jButton_DeleteAccountActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel9.setText("Request Personal Info:");
+
+        jButton_RequestInfo.setBackground(new java.awt.Color(0, 204, 204));
+        jButton_RequestInfo.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_RequestInfo.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_RequestInfo.setText("Request Info");
+        jButton_RequestInfo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_RequestInfoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_RequestInfoMouseExited(evt);
+            }
+        });
+        jButton_RequestInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_RequestInfoActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText("Postal Code:");
+
+        jTextField_PostalCode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField_PostalCodeActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setText("Country:");
+
+        jLabel12.setText("City:");
+
+        jLabel13.setText("Street Name & #:");
+
+        jTextField_City.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField_CityActionPerformed(evt);
             }
         });
 
@@ -179,51 +289,163 @@ public class Settings_Form extends javax.swing.JFrame{
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton_Cuser, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGap(17, 17, 17)
-                            .addComponent(jButton_Back, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGap(90, 90, 90)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jButton_Cpswd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton_security, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton_Rpersonal, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
-                                .addComponent(jButton_Daccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jSeparator2)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton_UpdatePassword)
+                .addGap(197, 197, 197))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPasswordField_Old, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                            .addComponent(jPasswordField_New)
+                            .addComponent(jPasswordField_ConfirmNew))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton_Close, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField_Username, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel11)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jTextField_Country, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel13)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jTextField_Street, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel12))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextField_PostalCode, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                                    .addComponent(jTextField_City)))
+                            .addComponent(jButton_DeleteAccount))
+                        .addContainerGap(19, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton_UpdateUsername)
+                        .addGap(33, 33, 33)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton_RequestInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField_LastName))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addGap(65, 65, 65)
+                                    .addComponent(jTextField_FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addGap(12, 12, 12)
+                                    .addComponent(jButton_UpdateNames))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton_UpdateAddress)
+                        .addGap(113, 113, 113))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jButton_Cuser, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton_Cpswd, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jButton_Close, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jPasswordField_Old, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
-                .addComponent(jButton_Rpersonal, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                .addComponent(jButton_Daccount, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jButton_security, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jPasswordField_New, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton_Back, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jPasswordField_ConfirmNew, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton_UpdatePassword, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jTextField_FirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel10))
+                            .addComponent(jTextField_Street, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField_PostalCode, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jTextField_Country, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTextField_City, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTextField_LastName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel5)
+                                .addComponent(jLabel11))))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel13)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(jButton_UpdateNames, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jButton_UpdateAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jTextField_Username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6))
+                                .addGap(5, 5, 5)))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton_RequestInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton_DeleteAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton_UpdateUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         loginLabel.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
         loginLabel.setForeground(new java.awt.Color(255, 255, 255));
-        loginLabel.setText("Account Settings");
+        loginLabel.setText("Update Information");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(189, Short.MAX_VALUE)
+                .addContainerGap(181, Short.MAX_VALUE)
                 .addComponent(loginLabel)
-                .addGap(177, 177, 177))
+                .addGap(189, 189, 189))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -232,11 +454,10 @@ public class Settings_Form extends javax.swing.JFrame{
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(4, 4, 4)
                 .addComponent(loginLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -245,115 +466,323 @@ public class Settings_Form extends javax.swing.JFrame{
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton_CpswdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_CpswdActionPerformed
-       Change_Password newPassword = new Change_Password();
-       newPassword.getPassword(this.password);
-       newPassword.setVisible(true);
-       newPassword.pack();
-       newPassword.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }//GEN-LAST:event_jButton_CpswdActionPerformed
+    private void jTextField_CityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_CityActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField_CityActionPerformed
 
-    private void jButton_CpswdMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_CpswdMouseExited
-        // set jbutton background
-        jButton_Cpswd.setBackground(new Color(0, 153, 153));
-    }//GEN-LAST:event_jButton_CpswdMouseExited
+    private void jTextField_PostalCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_PostalCodeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField_PostalCodeActionPerformed
 
-    private void jButton_CpswdMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_CpswdMouseEntered
-        // set jbutton background
-        jButton_Cpswd.setBackground(new Color(0, 255, 255));
-    }//GEN-LAST:event_jButton_CpswdMouseEntered
-
-    private void jButton_RpersonalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_RpersonalActionPerformed
-       // set jbutton background
-        jButton_Cuser.setBackground(new Color(0, 153, 153));
-    }//GEN-LAST:event_jButton_RpersonalActionPerformed
-
-    private void jButton_RpersonalMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_RpersonalMouseExited
-        // set jbutton background
-        jButton_Rpersonal.setBackground(new Color(0, 153, 153));
-    }//GEN-LAST:event_jButton_RpersonalMouseExited
-
-    private void jButton_RpersonalMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_RpersonalMouseEntered
-        // set jbutton background
-        jButton_Rpersonal.setBackground(new Color(0, 255, 255));
-    }//GEN-LAST:event_jButton_RpersonalMouseEntered
-
-    private void jButton_CuserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_CuserActionPerformed
-       
-    }//GEN-LAST:event_jButton_CuserActionPerformed
-
-    private void jButton_CuserMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_CuserMouseExited
-        // set jbutton background
-        jButton_Cuser.setBackground(new Color(0, 153, 153));
-    }//GEN-LAST:event_jButton_CuserMouseExited
-
-    private void jButton_CuserMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_CuserMouseEntered
-        // set jbutton background
-        jButton_Cuser.setBackground(new Color(0, 255, 255));
-    }//GEN-LAST:event_jButton_CuserMouseEntered
-
-    private void jButton_BackMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_BackMouseEntered
-        // set jbutton background
-        jButton_Back.setBackground(new Color(0, 255, 255));
-    }//GEN-LAST:event_jButton_BackMouseEntered
-
-    private void jButton_BackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_BackMouseExited
-        // set jbutton background
-        jButton_Back.setBackground(new Color(0, 153, 153));
-    }//GEN-LAST:event_jButton_BackMouseExited
-
-    private void jButton_BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_BackActionPerformed
-        if(userType.equals("Customer")){
-            Customer_Form user = new Customer_Form();
-            user.setUserName(username);
-            user.setVisible(true);
-            user.pack();
-            user.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            this.dispose();
+    
+    private void jButton_RequestInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_RequestInfoActionPerformed
+        String nl = "\r\n";
+        File requestInfoFile = new File("C:\\SmartShoppersSystem\\RequestedData\\requestedInfo.txt");
+        try {
+            requestInfoFile.createNewFile();
+        } catch (IOException ex) {
+            Logger.getLogger(Settings_Form.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jButton_BackActionPerformed
+        File requestInfoDir = new File("C:\\SmartShoppersSystem\\RequestedData");
+        createFolder(requestInfoDir);
+        FileWriter fw;
+        try {
+            fw = new FileWriter(requestInfoFile, false);
+            fw.write("Username: " + this.username + nl);
+            fw.write("First Name: " + this.firstName + nl);
+            fw.write("Last Name: " + this.lastName + nl);
+            fw.write("Street: " + this.street + nl);
+            fw.write("Postal Code: " + this.PostalCode + nl);
+            fw.write("City: " + this.city + nl);
+            fw.write("Country: " + this.country);
+            fw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Settings_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JOptionPane.showMessageDialog(null, "Requested Data can be found in C:\\SmartShoppersSystem\\RequestedData"
+                , "Requested Data", 2);
+    }//GEN-LAST:event_jButton_RequestInfoActionPerformed
 
-    private void jButton_securityMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_securityMouseEntered
+    private void jButton_RequestInfoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_RequestInfoMouseExited
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton_securityMouseEntered
+        jButton_RequestInfo.setBackground(new Color(0, 204, 204));
+    }//GEN-LAST:event_jButton_RequestInfoMouseExited
 
-    private void jButton_securityMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_securityMouseExited
+    private void jButton_RequestInfoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_RequestInfoMouseEntered
         // set jbutton background
-        jButton_security.setBackground(new Color(0, 153, 153));
-    }//GEN-LAST:event_jButton_securityMouseExited
+        jButton_RequestInfo.setBackground(new Color(0, 153, 153));
+    }//GEN-LAST:event_jButton_RequestInfoMouseEntered
 
-    private void jButton_securityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_securityActionPerformed
-         // set jbutton background
-        jButton_security.setBackground(new Color(0, 255, 255));
-    }//GEN-LAST:event_jButton_securityActionPerformed
+    private void jButton_DeleteAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_DeleteAccountActionPerformed
+        try {
+            int input = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to delete your account?", "Deletion of Account",
+                    JOptionPane.OK_CANCEL_OPTION, 2);
+            Maintain_Users maintainLogin = new Maintain_Users();
+            maintainLogin.load(loginFilePath);
+            
+            if (input == 0){
+                for(User user: maintainLogin.users){
+                    if(user.getUsername().equals(this.username)){
+                        maintainLogin.users.remove(user);
+                        break;
+                    }
+                }
+                JOptionPane.showMessageDialog(null, "Account Deleted", "Deleted", 2);
+                maintainLogin.update(loginFilePath);
+                
+                Smart_Shoppers_System login = new Smart_Shoppers_System();
+                login.setVisible(true);
+                login.pack();
+                login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                this.dispose();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Settings_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton_DeleteAccountActionPerformed
 
-    private void jButton_DaccountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_DaccountMouseEntered
-         // set jbutton background
-        jButton_Daccount.setBackground(new Color(0, 255, 255));
-    }//GEN-LAST:event_jButton_DaccountMouseEntered
+    private void jButton_DeleteAccountMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_DeleteAccountMouseExited
+        // set jbutton background
+        jButton_DeleteAccount.setBackground(new Color(0, 204, 204));
+    }//GEN-LAST:event_jButton_DeleteAccountMouseExited
 
-    private void jButton_DaccountMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_DaccountMouseExited
-       // set jbutton background
-        jButton_Daccount.setBackground(new Color(0, 153, 153));
-    }//GEN-LAST:event_jButton_DaccountMouseExited
+    private void jButton_DeleteAccountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_DeleteAccountMouseEntered
+        // set jbutton background
+        jButton_DeleteAccount.setBackground(new Color(0, 153, 153));
+    }//GEN-LAST:event_jButton_DeleteAccountMouseEntered
 
-    private void jButton_DaccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_DaccountActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton_DaccountActionPerformed
+    private boolean addressFilled(String street, String postalCode, String city, String country){
+        boolean filled = true;
+        
+        if(street.trim().equals("") || postalCode.trim().equals("") || city.trim().equals("")
+                || country.trim().equals("")){
+            filled = false;
+            JOptionPane.showMessageDialog(null, "Username not entered", "Missing Field", 2);
+        }
+        return filled;
+    }
+    
+    private void updateAddress(){
+        String newStreet = jTextField_Street.getText();
+        String newPostalCode = jTextField_PostalCode.getText();
+        String newCity = jTextField_City.getText();
+        String newCountry = jTextField_Country.getText();
+        
+        try {
+            if(addressFilled(newStreet, newPostalCode, newCity, newCountry)){
+                Maintain_Users maintainLogin = new Maintain_Users();
+                maintainLogin.load(loginFilePath);
+                
+                for(User user: maintainLogin.users){
+                    if(user.getUsername().equals(this.username)){
+                        user.setStreet(newStreet);
+                        user.setPostalCode(newPostalCode);
+                        user.setCity(newCity);
+                        user.setCountry(newCountry);
+                        this.currentUser = user;
+                        break;
+                    }
+                }
+                maintainLogin.update(loginFilePath);
+                JOptionPane.showMessageDialog(null, "Address Successfully Changed.", "New Username", 2);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Settings_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void jButton_UpdateAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateAddressActionPerformed
+       updateAddress();
+    }//GEN-LAST:event_jButton_UpdateAddressActionPerformed
+
+    private void jButton_UpdateAddressMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateAddressMouseExited
+        // set jbutton background
+        jButton_UpdateAddress.setBackground(new Color(0, 204, 204));
+    }//GEN-LAST:event_jButton_UpdateAddressMouseExited
+
+    private void jButton_UpdateAddressMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateAddressMouseEntered
+        // set jbutton background
+        jButton_UpdateAddress.setBackground(new Color(0, 153, 153));
+    }//GEN-LAST:event_jButton_UpdateAddressMouseEntered
+    
+    private boolean usernameFilled(String username){
+        boolean filled = true;
+        
+        if(username.trim().equals("")){
+            filled = false;
+            JOptionPane.showMessageDialog(null, "Username not entered", "Missing Field", 2);
+        }
+        return filled;
+    }
+    
+    private void updateUsername(){
+        String newUsername = jTextField_Username.getText();
+        try {
+            if(usernameFilled(newUsername)){
+                Maintain_Users maintainLogin = new Maintain_Users();
+                maintainLogin.load(loginFilePath);
+                for(User user: maintainLogin.users){
+                    if(user.getUsername().equals(this.username)){
+                        user.setUsername(newUsername);
+                        this.currentUser = user;
+                        break;
+                    }
+                }
+                maintainLogin.update(loginFilePath);
+                JOptionPane.showMessageDialog(null, "Username Successfully Changed to " + newUsername + ".", 
+                "New Username", 2);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Settings_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void jButton_UpdateUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateUsernameActionPerformed
+        updateUsername();
+    }//GEN-LAST:event_jButton_UpdateUsernameActionPerformed
+
+    private void jButton_UpdateUsernameMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateUsernameMouseExited
+        // set jbutton background
+        jButton_UpdateUsername.setBackground(new Color(0, 204, 204));
+    }//GEN-LAST:event_jButton_UpdateUsernameMouseExited
+
+    private void jButton_UpdateUsernameMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateUsernameMouseEntered
+        // set jbutton background
+        jButton_UpdateUsername.setBackground(new Color(0, 153, 153));
+    }//GEN-LAST:event_jButton_UpdateUsernameMouseEntered
+
+    private boolean verifiedPassword(String oldPassword, String newPassword, String confirmNewPass){
+        boolean passwordVerified = false;
+        
+        if(!oldPassword.trim().equals("") && !newPassword.trim().equals("") && 
+            !confirmNewPass.trim().equals("") && oldPassword.equals(this.password)){
+            passwordVerified = true;
+        }else{
+            JOptionPane.showMessageDialog(null, "Passwords do not match!", "Error", 2);
+        }
+        return passwordVerified;
+    }
+    
+    private void updatePassword() throws Exception{
+        String oldPassword = String.valueOf(jPasswordField_Old.getPassword());
+        String newPassword = String.valueOf(jPasswordField_New.getPassword());
+        String confirmNewPass = String.valueOf(jPasswordField_ConfirmNew.getPassword());
+        
+        if(verifiedPassword(oldPassword, newPassword, confirmNewPass)){
+            Maintain_Users maintainLogin = new Maintain_Users();
+            maintainLogin.load(loginFilePath);
+            for(User user: maintainLogin.users){
+                if(user.getUsername().equals(this.username)){
+                    user.setPassword(newPassword);
+                    this.currentUser = user;
+                    break;
+                }
+            }
+            maintainLogin.update(loginFilePath);
+            JOptionPane.showMessageDialog(null, "Password Successfully Changed", "New Password", 2);
+        }
+    }
+    
+    private void jButton_UpdatePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdatePasswordActionPerformed
+        try {
+            updatePassword();
+        } catch (Exception ex) {
+            Logger.getLogger(Settings_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton_UpdatePasswordActionPerformed
+
+    private void jButton_UpdatePasswordMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdatePasswordMouseExited
+        // set jbutton background
+        jButton_UpdatePassword.setBackground(new Color(0, 204, 204));
+    }//GEN-LAST:event_jButton_UpdatePasswordMouseExited
+
+    private void jButton_UpdatePasswordMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdatePasswordMouseEntered
+        // set jbutton background
+        jButton_UpdatePassword.setBackground(new Color(0, 153, 153));
+    }//GEN-LAST:event_jButton_UpdatePasswordMouseEntered
+
+    private void jButton_CloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_CloseActionPerformed
+        Customer_Form customer = new Customer_Form();
+        customer.getUser(this.currentUser);
+        customer.setVisible(true);
+        customer.pack();
+        customer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.dispose();
+    }//GEN-LAST:event_jButton_CloseActionPerformed
+
+    private void jButton_CloseMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_CloseMouseExited
+        // set jbutton background
+        jButton_Close.setBackground(new Color(0, 204, 204));
+    }//GEN-LAST:event_jButton_CloseMouseExited
+
+    private void jButton_CloseMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_CloseMouseEntered
+        // set jbutton background
+        jButton_Close.setBackground(new Color(0, 153, 153));
+    }//GEN-LAST:event_jButton_CloseMouseEntered
+
+    private boolean verifiedNames(String firstName, String lastName){
+        boolean namesVerified = true;
+        
+        if(firstName.trim().equals("") && lastName.trim().equals("")){
+            namesVerified = false;
+            JOptionPane.showMessageDialog(null, "Both fields are empty", "Missing Fields", 2);
+        }
+        
+        return namesVerified;
+    }
+    
+    private void updateNames() throws Exception{
+        String newFirstName = String.valueOf(jTextField_FirstName.getText());
+        String newLastName = String.valueOf(jTextField_LastName.getText());
+        
+        if(verifiedNames(newFirstName, newLastName)){
+            Maintain_Users maintainLogin = new Maintain_Users();
+            maintainLogin.load(loginFilePath);
+            for(User user: maintainLogin.users){
+                if(user.getFirstName().equals(this.firstName) && user.getLastName().equals(this.lastName)){
+                    user.setFirstName(newFirstName);
+                    user.setLastName(newLastName);
+                    this.firstName = newFirstName;
+                    this.lastName = newLastName;
+                    break;
+                }
+            }
+            maintainLogin.update(loginFilePath);
+            JOptionPane.showMessageDialog(null, "Names Successfully Changed", "New Password", 2);
+        }
+    }
+    
+    private void jButton_UpdateNamesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateNamesActionPerformed
+        try {
+            updateNames();
+        } catch (Exception ex) {
+            Logger.getLogger(Settings_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton_UpdateNamesActionPerformed
+
+    private void jButton_UpdateNamesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateNamesMouseExited
+        // set jbutton background
+        jButton_UpdateNames.setBackground(new Color(0, 204, 204));
+    }//GEN-LAST:event_jButton_UpdateNamesMouseExited
+
+    
+    private void jButton_UpdateNamesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateNamesMouseEntered
+        // set jbutton background
+        jButton_UpdateNames.setBackground(new Color(0, 153, 153));
+    }//GEN-LAST:event_jButton_UpdateNamesMouseEntered
 
     /**
      * @param args the command line arguments
@@ -394,14 +823,39 @@ public class Settings_Form extends javax.swing.JFrame{
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton_Back;
-    private javax.swing.JButton jButton_Cpswd;
-    private javax.swing.JButton jButton_Cuser;
-    private javax.swing.JButton jButton_Daccount;
-    private javax.swing.JButton jButton_Rpersonal;
-    private javax.swing.JButton jButton_security;
+    private javax.swing.JButton jButton_Close;
+    private javax.swing.JButton jButton_DeleteAccount;
+    private javax.swing.JButton jButton_RequestInfo;
+    private javax.swing.JButton jButton_UpdateAddress;
+    private javax.swing.JButton jButton_UpdateNames;
+    private javax.swing.JButton jButton_UpdatePassword;
+    private javax.swing.JButton jButton_UpdateUsername;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPasswordField jPasswordField_ConfirmNew;
+    private javax.swing.JPasswordField jPasswordField_New;
+    private javax.swing.JPasswordField jPasswordField_Old;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JTextField jTextField_City;
+    private javax.swing.JTextField jTextField_Country;
+    private javax.swing.JTextField jTextField_FirstName;
+    private javax.swing.JTextField jTextField_LastName;
+    private javax.swing.JTextField jTextField_PostalCode;
+    private javax.swing.JTextField jTextField_Street;
+    private javax.swing.JTextField jTextField_Username;
     private javax.swing.JLabel loginLabel;
     // End of variables declaration//GEN-END:variables
+
 }

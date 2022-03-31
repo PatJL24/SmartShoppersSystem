@@ -6,6 +6,7 @@ package User_Interfaces;
 
 import Settings.Settings_Form;
 import Smart_Shopper_System.Smart_Shoppers_System;
+import Smart_Shopper_System.User;
 import java.awt.Color;
 import java.io.File;
 import javax.swing.JFrame;
@@ -16,25 +17,48 @@ import javax.swing.JFrame;
  */
 public class Customer_Form extends javax.swing.JFrame {
 
-    File dic = new File("C:\\SmartShoppersSystem");   //directory file path
-    File file = new File("C:\\SmartShoppersSystem\\Customers\\customers.txt"); //file path
-    File storeLocation = new File("C:\\SmartShoppersSystem\\Stores\\storeLocations.txt"); //Store Locations  Path
+    String directory = "C:\\SmartShoppersSystem";
+    File loginDirectory = new File(directory);   //directory file path
     
-    String userName;
-    String userType = "Customer";
+    
+    String storeLocationDic = "C:\\SmartShoppersSystem\\Stores";
+    File storeDirectory = new File(directory);
+    
+    String storeLocationFilePath = "C:\\SmartShoppersSystem\\Stores\\storeLocations.csv";
+    File storeLocation = new File(storeLocationFilePath); //Store Locations  Path
+   
+    User currentUser;
+    
+    
+    String username;
     String password;
-    String email;
-    /**
-     * Acquires the username of the customer
-     * @param userName 
-     */
-    public void setUserName(String userName){
-        customerLabel.setText("Customer: " + userName);
-        this.userName = userName;
+    String firstName;
+    String lastName;
+    String street;
+    String Country;
+    String city;
+    String PostalCode;
+    String userType = "Customer";
+    
+    public void getUser(User user){
+        this.currentUser = user;
+        this.username = user.getUsername();
+        customerLabel.setText("Customer: " + this.username);
+        this.password = user.getPassword();
+        this.userType = user.getUserType();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.street = user.getStreet();
+        this.Country = user.getCountry();
+        this.city = user.getCity();
+        this.PostalCode = user.getPostalCode();
     }
     
-    public void getPassword(String pswd){
-        this.password = pswd;
+    // create folder in which record is save
+    private void createFolder(File dic) {
+        if (!dic.isDirectory()) {
+            dic.mkdirs();
+        }
     }
     
     /**
@@ -112,11 +136,11 @@ public class Customer_Form extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(202, Short.MAX_VALUE)
+                .addContainerGap(246, Short.MAX_VALUE)
                 .addComponent(jButton_AccountSettings)
-                .addGap(26, 26, 26)
+                .addGap(27, 27, 27)
                 .addComponent(jButton_Logout, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28))
+                .addGap(17, 17, 17))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -125,7 +149,7 @@ public class Customer_Form extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton_Logout, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton_AccountSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(278, Short.MAX_VALUE))
+                .addContainerGap(296, Short.MAX_VALUE))
         );
 
         customerLabel.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
@@ -177,13 +201,11 @@ public class Customer_Form extends javax.swing.JFrame {
 
     private void jButton_AccountSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AccountSettingsActionPerformed
         Settings_Form accountSettings = new Settings_Form();
-        accountSettings.setUsername(this.userName);
-        accountSettings.getPassword(this.password);
-        accountSettings.getUserType(this.userType);
+        accountSettings.getUser(currentUser);
         accountSettings.setVisible(true);
         accountSettings.pack();
         accountSettings.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setVisible(false);
+         this.dispose();
     }//GEN-LAST:event_jButton_AccountSettingsActionPerformed
 
     private void jButton_AccountSettingsMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AccountSettingsMouseExited

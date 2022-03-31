@@ -11,8 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,80 +20,98 @@ import java.util.logging.Logger;
  */
 public class Smart_Shoppers_System extends javax.swing.JFrame {
     
-    File dic = new File("C:\\SmartShoppersSystem");   //directory file path
-    //File file = new File("C:\\SmartShoppersSystem\\logins.txt"); //file path
-    String path = "C:\\SmartShoppersSystem\\logins.csv";
-    File file = new File(path);
-    int ln;
+    String directory = "C:\\SmartShoppersSystem";
+    File dic = new File(directory);   //directory file path
+    
+    String loginFile = "C:\\SmartShoppersSystem\\logins.csv";
+    File file = new File(loginFile);
+    
+    User currentUser;
+    
+    private boolean findUser(String userName, String password, String path) throws Exception{
+        boolean found = false;
+        Maintain_Users maintainLogin = new Maintain_Users();
+        maintainLogin.load(path);
+        
+        for(User newUser: maintainLogin.users){
+            if(newUser.getUsername().equals(userName) && newUser.getPassword().equals(password)){
+                found = true;
+                this.currentUser = newUser;
+            }
+        }
+        
+        return found;
+    }
     
     // create folder in which record is save
-    private void createFolder() {
+    private void createFolder(File dic) {
         if (!dic.isDirectory()) {
             dic.mkdirs();
         }
     }
     
     private void createFile(){
+        createFolder(this.dic);
         if(!file.isFile()){
             try {
                 FileWriter fw = new FileWriter(file);
             } catch (IOException ex) {
                 Logger.getLogger(Smart_Shoppers_System.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(Smart_Shoppers_System.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
-    private void login() {
+    private void addAdmin(){
+        try {
+            Maintain_Users maintainLogin = new Maintain_Users();
+            maintainLogin.load(loginFile);
+            
+            User newUser = new User("Admin", "password");
+            
+            if(maintainLogin.users.isEmpty()){
+                maintainLogin.users.add(newUser);
+            }
+            
+            maintainLogin.update(loginFile);
+        } catch (Exception ex) {
+            Logger.getLogger(Smart_Shoppers_System.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void login() throws Exception {
         String username = jTextField_Username.getText();
 
         String password = String.valueOf(jPasswordField_Password.getPassword());
-       
+        
         try {
-            createFolder();
-            createFile();
-            validLogin(username, password);
+            validLogin(username, password, loginFile);
         } catch (FileNotFoundException ex) {}
     }
     
 
     // login logic 
-    private void validLogin(String usr, String pswd) throws FileNotFoundException {
-        Scanner fileScan = new Scanner(file);
-      
+    private void validLogin(String usr, String pswd, String path) throws FileNotFoundException, Exception {
+        createFile();
         
+        //Scanner fileScan = new Scanner(file);
+
         if(file.length() < 1){
+            addAdmin();
             JOptionPane.showMessageDialog(null, "No Users Registered.", "Login Error", 2);
         }
         
-        fileScan.nextLine();
-        while (fileScan.hasNextLine()) {
-            String input = fileScan.nextLine();
-            String[] userValues = input.split(",");
-            
-            String Username = userValues[0];
-            String password = userValues[1];
-            String userType = userValues[3];
-
-           System.out.println(userType);
-           if (Username.equals(usr)) {
-               if(password.equals(pswd)){
-                    //Call Depending on the Account Type which class.
-                    if(userType.equals("Customer")){
-                        Customer_Form customer = new Customer_Form();
-                        customer.setUserName(Username);
-                        customer.setVisible(true);
-                        customer.pack();
-                        customer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                        this.dispose();
-                    }
-                    break;
-               }else{
-                   JOptionPane.showMessageDialog(null, "Invalid Username/Password.", "Login Error", 2);
-               }
-           }
-           
+        if(findUser(usr, pswd, path) && this.currentUser.getUserType().equals("Customer")){
+            Customer_Form customer = new Customer_Form();
+            customer.getUser(this.currentUser);
+            customer.setVisible(true);
+            customer.pack();
+            customer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this.dispose();
+        }else{
+             JOptionPane.showMessageDialog(null, "Invalid Username or Password", "Login Error", 2);
         }
-        
     }
     
     /**
@@ -276,7 +292,11 @@ public class Smart_Shoppers_System extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void jButton_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_LoginActionPerformed
-        login();
+        try {
+            login();
+        } catch (Exception ex) {
+            Logger.getLogger(Smart_Shoppers_System.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton_LoginActionPerformed
 
     
@@ -303,6 +323,8 @@ public class Smart_Shoppers_System extends javax.swing.JFrame {
 
     private void jButton_RegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_RegisterActionPerformed
         // Calls the register form
+        createFile();
+        addAdmin();
         Register_Form register = new Register_Form();
         register.setVisible(true);
         register.pack();
@@ -339,7 +361,6 @@ public class Smart_Shoppers_System extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new Smart_Shoppers_System().setVisible(true);
