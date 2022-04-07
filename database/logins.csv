@@ -1,0 +1,5 @@
+Username,Password,First Name,Last Name,Street,Postal Code,City,Country,User Type
+admin,password,Patrick,Li,,,,,Administrator
+Manager1,123,Patrick,Li,,,,,Manager
+Manager2,123,Bob,Lee,,,,,Manager
+Pat,123,Patrick,Li,123,123,123,123,Customer
