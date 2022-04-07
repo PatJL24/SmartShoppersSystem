@@ -4,19 +4,17 @@
  */
 package User_Interfaces;
 
+import Data_Management.Maintain_Stores;
 import Data_Management.Maintain_Users;
+import Data_Management.Store;
 import Data_Management.User;
 import SmarkShopperSystem.Smart_Shoppers_System;
-import com.csvreader.CsvReader;
 
 import java.awt.Color;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -24,18 +22,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import javax.swing.table.TableModel;
 
 /**
  *
  * @author patli
  */
 public class Admin_Form extends javax.swing.JFrame {
-
-    File dic = new File("C:\\SmartShoppersSystem");   //directory file path
     
     String loginPath = "C:\\SmartShoppersSystem\\logins.csv";
     File loginFile = new File(loginPath);
@@ -46,12 +40,15 @@ public class Admin_Form extends javax.swing.JFrame {
     String itemsPath = "C:\\SmartShoppersSystem\\items.csv";
     File itemsFile = new File(itemsPath);
     
-    
-    Maintain_Users maintainUsers = new Maintain_Users();
+    String originalManagerName;
+    String originalStoreID;
+    String originalStoreName;
+
     User newUser;
+    Store newStore;
     
     
-    private boolean checkValues(String username) throws FileNotFoundException{        
+    private boolean checkUsername(String username) throws FileNotFoundException{        
         Scanner fileManager = new Scanner(loginFile);
         
         boolean found = false; // added this variable
@@ -60,6 +57,7 @@ public class Admin_Form extends javax.swing.JFrame {
             String input = fileManager.nextLine();
             String[] userValues = input.split(",");
             String Username = userValues[0];
+            
             if (Username.equals(username)) {
                 found = true; // added this to set found
             } // removed the else statement
@@ -67,13 +65,14 @@ public class Admin_Form extends javax.swing.JFrame {
         return found;
     }
     
-    private void addUser(String username, String password, String userType, String firstName, String lastName) throws IOException, Exception{
+    private void addManager(String username, String password, String userType, String firstName, String lastName) throws IOException, Exception{
         try {     
-            boolean validValues = checkValues(username);
+            boolean validValues = checkUsername(username);
             
             if(validValues == false){
                 
                 newUser = new User(username, password, userType, firstName, lastName);
+                Maintain_Users maintainUsers = new Maintain_Users();
                 
                 //add user to login file.
                 maintainUsers.load(loginPath);
@@ -89,8 +88,6 @@ public class Admin_Form extends javax.swing.JFrame {
                 jTextField_FirstName.setText("");
                 jTextField_LastName.setText("");
                 jTextField_StoreNumber.setText("");
-                
-                updateManagerTable();
             }
             else{
                JOptionPane.showMessageDialog(null, "Username taken. Try again.", "Error Message", JOptionPane.INFORMATION_MESSAGE);
@@ -100,7 +97,7 @@ public class Admin_Form extends javax.swing.JFrame {
         }
     }
     
-    private boolean verifyFields(String userName, String password,String firstName, String lastName){    
+    private boolean verifyManagerFields(String userName, String password,String firstName, String lastName){    
         if(userName.trim().equals("") || password.trim().equals("")
                 || firstName.trim().equals("") || lastName.trim().equals("")){
             JOptionPane.showMessageDialog(null, "One or more fields are empty", "Missing Fields", 2);
@@ -120,11 +117,130 @@ public class Admin_Form extends javax.swing.JFrame {
         String lastName = jTextField_LastName.getText();
         
         try {
-            if(verifyFields(username, password, firstName, lastName) == true){
+            if(verifyManagerFields(username, password, firstName, lastName) == true){
                 //Need added to excel file
-                addUser(username, password, userType, firstName, lastName);
+                addManager(username, password, userType, firstName, lastName);
+                updateManagerTable();
             }
         } catch (IOException ex) {}
+    }
+    
+    private boolean checkStoreValues(String storeNum, String manager) throws FileNotFoundException{        
+        Scanner fileStore = new Scanner(storesFile);
+        Scanner fileManager = new Scanner(loginFile);
+        boolean found = false; // added this variable
+        
+        if(storesFile.length() == 0 || storesFile.length() == 1){
+            found = true;
+        }else{
+            while (fileStore.hasNextLine()) {
+                found = false;
+
+                String input = fileStore.nextLine();
+                String[] storeValues = input.split(",");
+                String numStore = storeValues[1];
+                String storeManager = storeValues[2];
+            
+                if (!storeNum.equals(numStore) || !manager.equals(storeManager)) {
+
+                    while(fileManager.hasNextLine()){
+
+                        String inputM = fileManager.nextLine();
+                        String[] loginValues = inputM.split(",");
+                        String userName = loginValues[0];
+                        String userType = loginValues[8];
+
+                        if(userType.equals("Manager")){
+                            if(userName.equals(manager)){
+                                found = true;
+                                }
+                            }
+                        }  
+                    }
+                }
+        }
+        return found;
+    }
+    
+    private void addStore(String openingHours, String closingHours, String storeNumber, 
+            String storeName, String address, String managerName) throws IOException, Exception{
+        try {     
+            boolean validValues = checkStoreValues(storeNumber, managerName);
+            
+            System.out.println(validValues);
+            
+            if(validValues){
+                
+                int distance = (int)(Math.random() * (1000) + 1);
+                String distanceUser = String.valueOf(distance);
+                
+                newStore = new Store(storeName, storeNumber, openingHours, 
+                closingHours, address, managerName, distanceUser);
+                
+                Maintain_Stores maintainStores = new Maintain_Stores();
+                
+                //add user to login file.
+                maintainStores.load(storesPath);
+                
+                maintainStores.stores.add(newStore);
+
+                maintainStores.update(storesPath); 
+                
+                JOptionPane.showMessageDialog(null, "Register Successful!", "Registered", JOptionPane.INFORMATION_MESSAGE);
+                
+                jComboBox_OpeningHours.setSelectedItem("None");
+                jComboBox_ClosingHours.setSelectedItem("None");
+                jTextField_StoreNumber.setText("");
+                jTextField_StoreName.setText("");
+                jTextField_StoreAddress.setText("");
+                jTextField_StoreManager.setText("");
+            }
+            else{
+               JOptionPane.showMessageDialog(null, "Username Error. Try again.", "Error Message", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (FileNotFoundException ex) {
+            //Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private boolean verifyStoreFields(String openingHours, String closingHours, String storeNumber, 
+        String storeName, String address, String managerName){
+        
+        if(openingHours.trim().equals("None") || closingHours.trim().equals("None")
+                || storeNumber.trim().equals("") || storeName.trim().equals("") || managerName.trim().equals("") || 
+                address.trim().equals("")){
+           
+            JOptionPane.showMessageDialog(null, "One or more fields are empty", "Missing Fields", 2);
+            return false;
+        }
+        //if everything is okay
+        else{
+            return true;
+        }
+    }
+    
+    private void createStore(){
+        //Need to create store object and update it to the store file
+        //Need to create Manage object and update it to login file
+        String openingHours = jComboBox_OpeningHours.getSelectedItem().toString();
+        String closingHours = jComboBox_ClosingHours.getSelectedItem().toString();
+        
+        String storeNumber = jTextField_StoreNumber.getText();
+        String storeName = jTextField_StoreName.getText();
+        
+        String storeAddress = jTextField_StoreAddress.getText();
+        
+        String managerName = jTextField_StoreManager.getText();
+        
+        if(verifyStoreFields(openingHours, closingHours, storeNumber, storeName, storeAddress, managerName) == true){
+            try {
+                //Need added to excel file
+                addStore(openingHours, closingHours, storeNumber, storeName, storeAddress, managerName);
+                updateStoreTable();
+            } catch (Exception ex) {
+                Logger.getLogger(Admin_Form.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     /**
@@ -134,10 +250,10 @@ public class Admin_Form extends javax.swing.JFrame {
         initComponents();
         
         this.setAlwaysOnTop(false);
-        
         this.setLocationRelativeTo(null);
         
         updateManagerTable();
+        updateStoreTable();
     }
 
     /**
@@ -152,7 +268,7 @@ public class Admin_Form extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable_UpdateManagers = new javax.swing.JTable();
+        jTable_ManagerTable = new javax.swing.JTable();
         customerLabel = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         customerLabel1 = new javax.swing.JLabel();
@@ -160,7 +276,6 @@ public class Admin_Form extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable_StoresTable = new javax.swing.JTable();
         jButton_DeleteStore = new javax.swing.JButton();
-        jButton_UpdateStore = new javax.swing.JButton();
         customerLabel8 = new javax.swing.JLabel();
         customerLabel9 = new javax.swing.JLabel();
         customerLabel10 = new javax.swing.JLabel();
@@ -174,6 +289,7 @@ public class Admin_Form extends javax.swing.JFrame {
         customerLabel11 = new javax.swing.JLabel();
         customerLabel15 = new javax.swing.JLabel();
         jTextField_FirstName = new javax.swing.JTextField();
+        jButton_UpdateStoreInfo = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         customerLabel2 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
@@ -188,7 +304,7 @@ public class Admin_Form extends javax.swing.JFrame {
         jSeparator7 = new javax.swing.JSeparator();
         jTextField_StoreNumber = new javax.swing.JTextField();
         customerLabel7 = new javax.swing.JLabel();
-        jTextField_CreateStoreManager = new javax.swing.JTextField();
+        jTextField_StoreManager = new javax.swing.JTextField();
         jButton_CreateStore = new javax.swing.JButton();
         jSeparator6 = new javax.swing.JSeparator();
         customerLabel14 = new javax.swing.JLabel();
@@ -198,7 +314,6 @@ public class Admin_Form extends javax.swing.JFrame {
         jTextField_StoreName = new javax.swing.JTextField();
         jSeparator9 = new javax.swing.JSeparator();
         jButton_Logout = new javax.swing.JButton();
-        jButton_UpdateTables = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -209,7 +324,7 @@ public class Admin_Form extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(0, 0, 255));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTable_UpdateManagers.setModel(new javax.swing.table.DefaultTableModel(
+        jTable_ManagerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -235,7 +350,12 @@ public class Admin_Form extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable_UpdateManagers);
+        jTable_ManagerTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable_ManagerTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTable_ManagerTable);
 
         jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 480, 140));
 
@@ -259,7 +379,7 @@ public class Admin_Form extends javax.swing.JFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Store #", "Store Name", "Managers", "Opening", "Closing", "Address"
+                "Store #", "Store ID", "Manager", "Opening", "Closing", "Address"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -270,9 +390,14 @@ public class Admin_Form extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable_StoresTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable_StoresTableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable_StoresTable);
 
-        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 490, 140));
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 480, 140));
 
         jButton_DeleteStore.setText("Delete Store");
         jButton_DeleteStore.addActionListener(new java.awt.event.ActionListener() {
@@ -280,15 +405,7 @@ public class Admin_Form extends javax.swing.JFrame {
                 jButton_DeleteStoreActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton_DeleteStore, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 180, 110, 40));
-
-        jButton_UpdateStore.setText("Update Store");
-        jButton_UpdateStore.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_UpdateStoreActionPerformed(evt);
-            }
-        });
-        jPanel2.add(jButton_UpdateStore, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 180, 110, 40));
+        jPanel2.add(jButton_DeleteStore, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, 110, 50));
 
         customerLabel8.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         customerLabel8.setForeground(new java.awt.Color(255, 255, 255));
@@ -298,7 +415,7 @@ public class Admin_Form extends javax.swing.JFrame {
         customerLabel9.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         customerLabel9.setForeground(new java.awt.Color(255, 255, 255));
         customerLabel9.setText("Click on Table To:");
-        jPanel2.add(customerLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, -1, 20));
+        jPanel2.add(customerLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, 20));
 
         customerLabel10.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         customerLabel10.setForeground(new java.awt.Color(255, 255, 255));
@@ -348,6 +465,14 @@ public class Admin_Form extends javax.swing.JFrame {
         jPanel2.add(customerLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 470, -1, -1));
         jPanel2.add(jTextField_FirstName, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 460, 100, 30));
 
+        jButton_UpdateStoreInfo.setText("Update Store Info");
+        jButton_UpdateStoreInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_UpdateStoreInfoActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton_UpdateStoreInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 180, 130, 50));
+
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 510, 570));
 
         jPanel3.setBackground(new java.awt.Color(204, 0, 204));
@@ -361,8 +486,8 @@ public class Admin_Form extends javax.swing.JFrame {
 
         customerLabel3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         customerLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        customerLabel3.setText("Store Creation:");
-        jPanel3.add(customerLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 0, -1, -1));
+        customerLabel3.setText("Store:");
+        jPanel3.add(customerLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 0, -1, -1));
 
         customerLabel4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         customerLabel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -371,7 +496,7 @@ public class Admin_Form extends javax.swing.JFrame {
 
         customerLabel5.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         customerLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        customerLabel5.setText("Store Number:");
+        customerLabel5.setText("Store ID:");
         jPanel3.add(customerLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
         jPanel3.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 340, 280, 10));
 
@@ -409,7 +534,7 @@ public class Admin_Form extends javax.swing.JFrame {
         customerLabel7.setForeground(new java.awt.Color(255, 255, 255));
         customerLabel7.setText("Address:");
         jPanel3.add(customerLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 220, -1, -1));
-        jPanel3.add(jTextField_CreateStoreManager, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 360, 270, 30));
+        jPanel3.add(jTextField_StoreManager, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 360, 270, 30));
 
         jButton_CreateStore.setText("Add Store");
         jButton_CreateStore.addActionListener(new java.awt.event.ActionListener() {
@@ -417,7 +542,7 @@ public class Admin_Form extends javax.swing.JFrame {
                 jButton_CreateStoreActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton_CreateStore, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 430, 120, 30));
+        jPanel3.add(jButton_CreateStore, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 430, 110, 40));
         jPanel3.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 170, 90, 10));
 
         customerLabel14.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -466,27 +591,7 @@ public class Admin_Form extends javax.swing.JFrame {
                 jButton_LogoutActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton_Logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, 100, 40));
-
-        jButton_UpdateTables.setBackground(new java.awt.Color(204, 0, 204));
-        jButton_UpdateTables.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButton_UpdateTables.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_UpdateTables.setText("Update Tables");
-        jButton_UpdateTables.setMaximumSize(new java.awt.Dimension(100, 28));
-        jButton_UpdateTables.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_UpdateTablesMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_UpdateTablesMouseExited(evt);
-            }
-        });
-        jButton_UpdateTables.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_UpdateTablesActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton_UpdateTables, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 10, 150, 40));
+        jPanel1.add(jButton_Logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 10, 100, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -509,28 +614,44 @@ public class Admin_Form extends javax.swing.JFrame {
     private void jTextField_StoreNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_StoreNumberActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField_StoreNumberActionPerformed
-    
-    
-    
-    private void createStore(){
-        //Need to create store object and update it to the store file
-        //Need to create Manage object and update it to login file
-    }
+
     
     private void jButton_CreateStoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_CreateStoreActionPerformed
        //Need to update both Login file and stores file by creating objects
        createStore();
-       updateStoresTable();
-       updateManagerTable();
     }//GEN-LAST:event_jButton_CreateStoreActionPerformed
 
     private void jButton_DeleteStoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_DeleteStoreActionPerformed
-        // TODO add your handling code here:
+        if(jTable_StoresTable.getSelectedRowCount() == 1){
+            try {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to delete the store?", "Deletion of Store",
+                        JOptionPane.OK_CANCEL_OPTION, 2);
+                
+                Maintain_Stores maintainStore = new Maintain_Stores();
+                maintainStore.load(storesPath);
+                
+                if (input == 0){
+                    for(Store store: maintainStore.stores){
+                        if(store.getStoreNum().equals(originalStoreID)){
+                            maintainStore.stores.remove(store);
+                            break;
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null, "Store Deleted", "Deleted", 2);
+                    maintainStore.update(storesPath);
+                    updateStoreTable();
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(Admin_Form.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            if(jTable_ManagerTable.getRowCount() == 0){
+                 JOptionPane.showMessageDialog(null, "Table is Empty", "Empty Table", 2);
+            }
+            JOptionPane.showMessageDialog(null, "Select a Row to update.", "Updated", 2);
+        }
     }//GEN-LAST:event_jButton_DeleteStoreActionPerformed
-
-    private void jButton_UpdateStoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateStoreActionPerformed
-        updateStoresTable();
-    }//GEN-LAST:event_jButton_UpdateStoreActionPerformed
 
     private void jButton_CreateManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_CreateManagerActionPerformed
         try {
@@ -543,14 +664,98 @@ public class Admin_Form extends javax.swing.JFrame {
         //updateManagerTables();
     }//GEN-LAST:event_jButton_CreateManagerActionPerformed
 
+    private void deleteManager(){
+        if(jTable_ManagerTable.getSelectedRowCount() == 1){
+            try {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to delete your account?", "Deletion of Account",
+                        JOptionPane.OK_CANCEL_OPTION, 2);
+                
+                Maintain_Users maintainLogin = new Maintain_Users();
+                maintainLogin.load(loginPath);
+                
+                Maintain_Stores maintainStore = new Maintain_Stores();
+                maintainStore.load(storesPath);
+                
+                if (input == 0){
+                    for(User user: maintainLogin.users){
+                        if(user.getUsername().equals(originalManagerName) && user.getUserType().equals("Manager")){
+                            maintainLogin.users.remove(user);
+                            break;
+                        }
+                    }
+                    
+                    for(Store store: maintainStore.stores){
+                        if(store.getManager().equals(originalManagerName)){
+                                store.setManager("");
+                                break;
+                        }    
+                    }        
+                    JOptionPane.showMessageDialog(null, "Account Deleted", "Deleted", 2);
+                    maintainLogin.update(loginPath);
+                    maintainStore.update(storesPath);
+                    
+                    updateManagerTable();
+                    updateStoreTable();
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(Admin_Form.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            if(jTable_ManagerTable.getRowCount() == 0){
+                 JOptionPane.showMessageDialog(null, "Table is Empty", "Empty Table", 2);
+            }
+            JOptionPane.showMessageDialog(null, "Select a Row to update.", "Updated", 2);
+        }
+    }
+    
     private void jButton_DeleteManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_DeleteManagerActionPerformed
-        // TODO add your handling code here:
+        deleteManager();
     }//GEN-LAST:event_jButton_DeleteManagerActionPerformed
 
-    private void jButton_UpdateManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateManagerActionPerformed
-        //Need to Update the values of excel files first
-        updateManagerTable();
+    private void updateManager(){
+        //set data to textfield when selected
         
+        if(jTable_ManagerTable.getSelectedRowCount() == 1){
+            try {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to update your account?", "Updating Account",
+                        JOptionPane.OK_CANCEL_OPTION, 2);
+                
+                Maintain_Users maintainLogin = new Maintain_Users();
+                maintainLogin.load(loginPath);
+                
+                if (input == 0){
+                    for(User user: maintainLogin.users){
+                        if(user.getUsername().equals(originalManagerName) && user.getUserType().equals("Manager")){
+                            String newUsername = jTextField_ManagerUsername.getText();
+                            String newPassword = String.valueOf(jPasswordField_ManagerPassword.getPassword());
+                            String newFirstName = jTextField_FirstName.getText();
+                            String newLastName = jTextField_LastName.getText();
+                            user.setUsername(newUsername);
+                            user.setPassword(newPassword);
+                            user.setFirstName(newFirstName);
+                            user.setLastName(newLastName);
+                            break;
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null, "Account Updated", "Updated", 2);
+                    maintainLogin.update(loginPath);
+                }
+                updateManagerTable();
+            } catch (Exception ex) {
+                Logger.getLogger(Admin_Form.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            if(jTable_ManagerTable.getRowCount() == 0){
+                 JOptionPane.showMessageDialog(null, "Table is Empty", "Empty Table", 2);
+            }
+            JOptionPane.showMessageDialog(null, "Select a Row to update.", "Updated", 2);
+        }
+    }
+    
+    private void jButton_UpdateManagerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateManagerActionPerformed
+       updateManager();
     }//GEN-LAST:event_jButton_UpdateManagerActionPerformed
 
     private void jComboBox_ClosingHoursActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_ClosingHoursActionPerformed
@@ -583,27 +788,115 @@ public class Admin_Form extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField_StoreNameActionPerformed
 
-    private void jButton_UpdateTablesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateTablesActionPerformed
-        updateStoresTable();
-        updateManagerTable();
-    }//GEN-LAST:event_jButton_UpdateTablesActionPerformed
+    private void jButton_UpdateStoreInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateStoreInfoActionPerformed
+        if(jTable_StoresTable.getSelectedRowCount() == 1){
+            StoreMangement_Form  store_Form = new StoreMangement_Form();
+            store_Form.setVisible(true);
+            store_Form.getStoreNum(originalStoreID);
+            store_Form.getStoreName(originalStoreName);
+            store_Form.getUserType("Admin");
+            store_Form.pack();
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this.dispose();
+        }
+        else{
+             JOptionPane.showMessageDialog(null, "Select a Row to Edit the Store.", "Select a Store", 2);
+        }
+    }//GEN-LAST:event_jButton_UpdateStoreInfoActionPerformed
 
-    private void jButton_UpdateTablesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateTablesMouseExited
-        // set jbutton background
-        jButton_UpdateTables.setBackground(new Color(204, 0, 204));
-    }//GEN-LAST:event_jButton_UpdateTablesMouseExited
-
-    private void jButton_UpdateTablesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateTablesMouseEntered
-        // set jbutton background
-        jButton_UpdateTables.setBackground(new Color(255, 102, 255));
-    }//GEN-LAST:event_jButton_UpdateTablesMouseEntered
-    
-    private void updateStoresTable(){
+    private void jTable_ManagerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_ManagerTableMouseClicked
+        DefaultTableModel managerModel = (DefaultTableModel)jTable_ManagerTable.getModel();
         
+        //set data to textfield when selected
+        
+        originalManagerName = managerModel.getValueAt(jTable_ManagerTable.getSelectedRow(), 0).toString();
+        String password = managerModel.getValueAt(jTable_ManagerTable.getSelectedRow(), 1).toString();
+        String firstName = managerModel.getValueAt(jTable_ManagerTable.getSelectedRow(), 2).toString();
+        String lastName = managerModel.getValueAt(jTable_ManagerTable.getSelectedRow(), 3).toString();
+        
+        jTextField_ManagerUsername.setText(originalManagerName);
+        jPasswordField_ManagerPassword.setText(password);
+        jTextField_FirstName.setText(firstName);
+        jTextField_LastName.setText(lastName);
+        
+    }//GEN-LAST:event_jTable_ManagerTableMouseClicked
+
+    private void jTable_StoresTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_StoresTableMouseClicked
+        DefaultTableModel storeModel = (DefaultTableModel)jTable_StoresTable.getModel();
+        
+        //set data to textfield when selected
+        
+        originalStoreName = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 0).toString();
+        originalStoreID = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 1).toString();
+        String managerName = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 2).toString();
+        String address = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 3).toString();
+        String opening = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 4).toString();
+        String closing = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 5).toString();
+        
+        jTextField_StoreName.setText(originalStoreName);
+        jTextField_StoreNumber.setText(originalStoreID);
+        jTextField_StoreManager.setText(managerName);
+        jTextField_StoreAddress.setText(address);
+        jComboBox_OpeningHours.setSelectedItem(opening);
+        jComboBox_ClosingHours.setSelectedItem(closing);
+    }//GEN-LAST:event_jTable_StoresTableMouseClicked
+    
+    private void updateStoreTable(){   
+        try {
+            DefaultTableModel csvData = new DefaultTableModel();
+
+            if(storesFile.length() == 0){
+                csvData.addColumn("Store Name");
+                csvData.addColumn("Store Number");
+                csvData.addColumn("Manager");
+                csvData.addColumn("Address");
+                csvData.addColumn("Opening");
+                csvData.addColumn("Closing");
+            }else{
+                Scanner fileScan = new Scanner(storesFile);
+            
+                int start = 0;
+
+                while (fileScan.hasNextLine()) {
+                    String input = fileScan.nextLine();
+                    String[] userValues = input.split(",");
+                    
+                    String storeName = userValues[0];
+                    String storeNum = userValues[1];
+                    String manager = userValues[2];
+                    String address = userValues[3];
+                    String openingHours = userValues[4];
+                    String closingHours = userValues[5];
+
+                    if(start == 0){
+                        start = 1;
+                        csvData.addColumn("Store Name");
+                        csvData.addColumn("Store Number");
+                        csvData.addColumn("Manager");
+                        csvData.addColumn("Address");
+                        csvData.addColumn("Opening");
+                        csvData.addColumn("Closing");
+                    }
+                    else{
+                        Vector row = new Vector();
+                        row.add(storeName);
+                        row.add(storeNum);
+                        row.add(manager);
+                        row.add(address);
+                        row.add(openingHours);
+                        row.add(closingHours);
+                        csvData.addRow(row);
+                    }
+                }
+            }
+            jTable_StoresTable.setModel(csvData);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Admin_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void updateManagerTable(){
-        try {
+        try {            
             DefaultTableModel csvData = new DefaultTableModel();
             
             Scanner fileScan = new Scanner(loginFile);
@@ -637,7 +930,7 @@ public class Admin_Form extends javax.swing.JFrame {
                     }
                 }
             }
-            jTable_UpdateManagers.setModel(csvData);
+            jTable_ManagerTable.setModel(csvData);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Admin_Form.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -702,8 +995,7 @@ public class Admin_Form extends javax.swing.JFrame {
     private javax.swing.JButton jButton_DeleteStore;
     private javax.swing.JButton jButton_Logout;
     private javax.swing.JButton jButton_UpdateManager;
-    private javax.swing.JButton jButton_UpdateStore;
-    private javax.swing.JButton jButton_UpdateTables;
+    private javax.swing.JButton jButton_UpdateStoreInfo;
     private javax.swing.JComboBox<String> jComboBox_ClosingHours;
     private javax.swing.JComboBox<String> jComboBox_OpeningHours;
     private javax.swing.JPanel jPanel1;
@@ -721,13 +1013,13 @@ public class Admin_Form extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JTable jTable_ManagerTable;
     private javax.swing.JTable jTable_StoresTable;
-    private javax.swing.JTable jTable_UpdateManagers;
-    private javax.swing.JTextField jTextField_CreateStoreManager;
     private javax.swing.JTextField jTextField_FirstName;
     private javax.swing.JTextField jTextField_LastName;
     private javax.swing.JTextField jTextField_ManagerUsername;
     private javax.swing.JTextField jTextField_StoreAddress;
+    private javax.swing.JTextField jTextField_StoreManager;
     private javax.swing.JTextField jTextField_StoreName;
     private javax.swing.JTextField jTextField_StoreNumber;
     // End of variables declaration//GEN-END:variables

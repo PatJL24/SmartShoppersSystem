@@ -10,8 +10,8 @@ package Data_Management;
  */
 public class Item {
     
-    String storeNum;
-    String name;
+    String storeID;
+    String itemName;
     String itemID;
     String category;
     String aisleNum;
@@ -19,11 +19,12 @@ public class Item {
     String size;
     String price;
     String itemOnSale;
+    String itemAvailability;
     
-    public Item(String name, String itemID, String description, String size, String price, 
-            String itemOnSale, String category, String aisleNum, String storeNum){
+    public Item(String itemName, String itemID, String description, String size, String price, 
+            String itemAvailability, String itemOnSale, String category, String aisleNum, String storeID){
         super();
-        this.name = name;
+        this.itemName = itemName;
         this.itemID = itemID;
         this.category = category;
         this.aisleNum = aisleNum;
@@ -31,20 +32,20 @@ public class Item {
         this.size = size;
         this.price = price;
         this.itemOnSale = itemOnSale;
-        this.storeNum = storeNum;
+        this.storeID = storeID;
+        this.itemAvailability = itemAvailability;
     }
     
     public Item(){
             super();
     }
     
-    
-    public String getName(){
-        return name;
+    public String getItemName(){
+        return itemName;
     }
     
-    public void setName(String name){
-        this.name = name;
+    public void setItemName(String name){
+        this.itemName = name;
     }
     
     public String getItemID(){
@@ -103,12 +104,20 @@ public class Item {
         this.itemOnSale = itemOnSale;
     }
     
-    public String getStoreNum(){
-        return storeNum;
+    public String getStoreID(){
+        return storeID;
     }
     
-    public void setStoreNum(String storeNum){
-        this.storeNum = storeNum;
+    public void setStoreID(String storeNum){
+        this.storeID = storeNum;
+    }
+    
+    public String getItemAvailability(){
+        return itemAvailability;
+    }
+    
+    public void setItemAvailability(String itemAvailability){
+        this.itemAvailability = itemAvailability;
     }
     
 }

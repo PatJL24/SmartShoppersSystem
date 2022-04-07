@@ -33,10 +33,9 @@ public class Maintain_Stores {
             store.setStoreNum(reader.get("Store Number"));
             store.setManager(reader.get("Manager"));
             store.setAddress(reader.get("Address"));
-            store.setDistanceFromUserAddress(reader.get("Distance from Customer"));
             store.setOpeningHours(reader.get("Opening Hours"));
             store.setClosingHours(reader.get("Closing Hours"));
-            store.setStoreAvailability(reader.get("Store Availibilty"));
+            store.setTotalItems(reader.get("Total Items"));
             stores.add(store);
 	}
     }
@@ -55,25 +54,21 @@ public class Maintain_Stores {
             csvOutput.write("Store Number");
             csvOutput.write("Manager");
             csvOutput.write("Address");
-            csvOutput.write("Distance from Customer");
             csvOutput.write("Opening Hours");
             csvOutput.write("Closing Hours");
-            csvOutput.write("Store Availibilty");
-            csvOutput.write("Categories");
+            csvOutput.write("Total Items");
             csvOutput.endRecord();
 
             // else assume that the file already has the correct header line
             // write out a few records
             for(Store u: stores){
-                
                 csvOutput.write(u.getStoreName()); //0
                 csvOutput.write(u.getStoreNum()); 
                 csvOutput.write(u.getManager()); 
                 csvOutput.write(u.getAddress()); 
-                csvOutput.write(u.getDistanceFromUserAddress()); 
                 csvOutput.write(u.getOpeningHours()); 
-                csvOutput.write(u.getClosingHours()); 
-                csvOutput.write(u.getStoreAvailability());  //7
+                csvOutput.write(u.getClosingHours());  //6
+                csvOutput.write(u.getTotalItems()); //7
                 csvOutput.endRecord();
             }
                 csvOutput.close();

@@ -28,7 +28,7 @@ public class Maintain_Items {
 		
 	while(reader.readRecord()){ 
             Item item = new Item();
-            item.setName(reader.get("Name"));
+            item.setItemName(reader.get("Item Name"));
             item.setItemID(reader.get("Item ID"));
             item.setCategory(reader.get("Category"));
             item.setAisleNum(reader.get("Aisle Num"));
@@ -36,7 +36,8 @@ public class Maintain_Items {
             item.setSize(reader.get("Size"));
             item.setPrice(reader.get("Price"));
             item.setItemOnSale(reader.get("Item On Sale"));
-            item.setStoreNum(reader.get("Store Num"));
+            item.setStoreID(reader.get("Store Num"));
+            item.setItemAvailability("Item Availability"); //9
             items.add(item);
 	}
     }
@@ -51,7 +52,7 @@ public class Maintain_Items {
             CsvWriter csvOutput = new CsvWriter(new FileWriter(path, false), ',');
             
             //name,id,email,password
-            csvOutput.write("Name");
+            csvOutput.write("Item Name");
             csvOutput.write("Item ID");
             csvOutput.write("Category");
             csvOutput.write("Aisle Num");
@@ -60,12 +61,13 @@ public class Maintain_Items {
             csvOutput.write("Price");
             csvOutput.write("Item On Sale");
             csvOutput.write("Store Num");
+            csvOutput.write("Item Availability"); //9
             csvOutput.endRecord();
 
             // else assume that the file already has the correct header line
             // write out a few records
             for(Item u: items){
-                csvOutput.write(u.getName()); 
+                csvOutput.write(u.getItemName()); 
                 csvOutput.write(u.getItemID());
                 csvOutput.write(u.getCategory());
                 csvOutput.write(u.getAisleNum());
@@ -73,7 +75,8 @@ public class Maintain_Items {
                 csvOutput.write(u.getSize()); 
                 csvOutput.write(u.getPrice()); 
                 csvOutput.write(u.getItemOnSale()); 
-                csvOutput.write(u.getStoreNum()); //8
+                csvOutput.write(u.getStoreID()); //8
+                csvOutput.write(u.getItemAvailability()); //9
                 csvOutput.endRecord();
             }
                 csvOutput.close();

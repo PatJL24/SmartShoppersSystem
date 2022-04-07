@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Store {
     //8 Categories
-    String storeAvailibilty;
+    String totalItems;
     String openingHours;
     String closingHours;
     String address;
@@ -24,16 +24,29 @@ public class Store {
     
     
     public Store(String storeName, String storeNum, String openingHours, String closingHours, String address,
-            String distanceFromUserAddress, String storeAvailability){
+            String manager, String distanceFromUserAddress, String totalItems){
         super();
         this.storeName = storeName;
         this.storeNum = storeNum;
-        this.storeAvailibilty = storeAvailability;
+        this.totalItems = totalItems;
         this.openingHours = openingHours;
         this.closingHours = closingHours;
         this.address = address;
         this.distanceFromUserAddress = distanceFromUserAddress;
-        //this.items = items;
+        this.manager = manager;
+    }
+    
+    public Store(String storeName, String storeNum, String openingHours, String closingHours, 
+            String address, String manager, String distanceFromUserAddress){
+        super();
+        this.storeName = storeName;
+        this.storeNum = storeNum;
+        this.openingHours = openingHours;
+        this.closingHours = closingHours;
+        this.address = address;
+        this.manager = manager;
+        this.distanceFromUserAddress = distanceFromUserAddress;
+        this.totalItems = "0";
     }
     
     public Store(){
@@ -64,12 +77,12 @@ public class Store {
         this.manager = manager;
     }
     
-    public String getStoreAvailability(){
-        return storeAvailibilty;
+    public String getTotalItems(){
+        return totalItems;
     }
     
-    public void setStoreAvailability(String storeAvailability){
-        this.storeAvailibilty = storeAvailability;
+    public void setTotalItems(String itemsAvailability){
+        this.totalItems = itemsAvailability;
     }
     
     public String getDistanceFromUserAddress(){
@@ -103,13 +116,4 @@ public class Store {
     public void setAddress(String address){
         this.address = address;
     }
-    
-    /**
-    public ArrayList<Item> getItems(){
-        return items;
-    }
-    
-    public void setItems(ArrayList<Item> items){
-        this.items = items;
-    }*/
 }
