@@ -5,7 +5,6 @@
 package User_Interfaces;
 
 import Data_Management.Maintain_Users;
-import SmarkShopperSystem.Smart_Shoppers_System;
 import Data_Management.User;
 import java.awt.Color;
 import java.io.File;
@@ -32,7 +31,7 @@ public class Settings_Form extends javax.swing.JFrame {
     String city;
     String PostalCode;
     
-    String loginFilePath = "C:\\SmartShoppersSystem\\logins.csv";
+    String loginFilePath = "C:\\SmartShoppersSystem\\database\\logins.csv";
     File loginFile = new File(loginFilePath);
     
     User currentUser;
@@ -344,7 +343,7 @@ public class Settings_Form extends javax.swing.JFrame {
     
     private void jButton_RequestInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_RequestInfoActionPerformed
         String nl = "\r\n";
-        File requestInfoFile = new File("C:\\SmartShoppersSystem\\requestedInfo.txt");
+        File requestInfoFile = new File("C:\\SmartShoppersSystem\\database\\requestedInfo.txt");
         try {
             requestInfoFile.createNewFile();
         } catch (IOException ex) {
@@ -364,7 +363,7 @@ public class Settings_Form extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Settings_Form.class.getName()).log(Level.SEVERE, null, ex);
         }
-        JOptionPane.showMessageDialog(null, "Requested Data can be found in C:\\SmartShoppersSystem"
+        JOptionPane.showMessageDialog(null, "Requested Data can be found in C:\\SmartShoppersSystem\\database"
                 , "Requested Data", 2);
     }//GEN-LAST:event_jButton_RequestInfoActionPerformed
 

@@ -4,7 +4,6 @@
  */
 package User_Interfaces;
 import Data_Management.Maintain_Users;
-import SmarkShopperSystem.Smart_Shoppers_System;
 import Data_Management.User;
 import java.awt.Color;
 import javax.swing.*;
@@ -17,8 +16,8 @@ import java.util.logging.Logger;
  * @author patli
  */
 public class Register_Form extends javax.swing.JFrame { 
-    File dic = new File("C:\\SmartShoppersSystem");   //directory file path
-    String loginPath = "C:\\SmartShoppersSystem\\logins.csv";
+    File dic = new File("C:\\SmartShoppersSystem\\database");   //directory file path
+    String loginPath = "C:\\SmartShoppersSystem\\database\\logins.csv";
     File loginFile = new File(loginPath);
     Maintain_Users maintainUsers = new Maintain_Users();
     User newUser;

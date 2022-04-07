@@ -4,28 +4,35 @@
  */
 package User_Interfaces;
 
-import SmarkShopperSystem.Smart_Shoppers_System;
 import Data_Management.User;
 import java.awt.Color;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author patli
  */
 public class Customer_Form extends javax.swing.JFrame {
-
-    String directory = "C:\\SmartShoppersSystem";
-    File loginDirectory = new File(directory);   //directory file path
     
+    String directoryPath = "C:\\SmartShoppersSystem\\database";
+    File systemPath = new File(directoryPath);   //directory file path
     
-    String storeLocationDic = "C:\\SmartShoppersSystem\\Stores";
-    File storeDirectory = new File(directory);
+    String loginPath = "C:\\SmartShoppersSystem\\database\\logins.csv";
+    File loginFile = new File(loginPath);
     
-    String storeLocationFilePath = "C:\\SmartShoppersSystem\\Stores\\storeLocations.csv";
-    File storeLocation = new File(storeLocationFilePath); //Store Locations  Path
-   
+    String storesPath = "C:\\SmartShoppersSystem\\database\\stores.csv";
+    File storesFile = new File(storesPath);
+    
+    String itemsPath = "C:\\SmartShoppersSystem\\database\\items.csv";
+    File itemsFile = new File(itemsPath);
+    
     User currentUser;
     
     
@@ -38,6 +45,8 @@ public class Customer_Form extends javax.swing.JFrame {
     String city;
     String PostalCode;
     String userType = "Customer";
+    String originalStoreName;
+    String originalStoreID;
     
     public void getUser(User user){
         this.currentUser = user;
@@ -59,6 +68,7 @@ public class Customer_Form extends javax.swing.JFrame {
     public Customer_Form() {
         initComponents();
         this.setLocationRelativeTo(null);
+        updateStoreTable();
     }
 
     /**
@@ -75,6 +85,9 @@ public class Customer_Form extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jButton_Logout = new javax.swing.JButton();
         jButton_AccountSettings = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable_StoresTable = new javax.swing.JTable();
+        jButton_Shop = new javax.swing.JButton();
         customerLabel = new javax.swing.JLabel();
 
         jToggleButton1.setText("jToggleButton1");
@@ -106,7 +119,7 @@ public class Customer_Form extends javax.swing.JFrame {
                 jButton_LogoutActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton_Logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(538, 6, 157, 47));
+        jPanel3.add(jButton_Logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 60, 170, 47));
 
         jButton_AccountSettings.setBackground(new java.awt.Color(204, 0, 204));
         jButton_AccountSettings.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -125,7 +138,54 @@ public class Customer_Form extends javax.swing.JFrame {
                 jButton_AccountSettingsActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton_AccountSettings, new org.netbeans.lib.awtextra.AbsoluteConstraints(342, 6, -1, 47));
+        jPanel3.add(jButton_AccountSettings, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 140, -1, 47));
+
+        jTable_StoresTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "Store Name", "StoreID", "Address", "Opening", "Closing", "Availability"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_StoresTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable_StoresTableMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTable_StoresTable);
+
+        jPanel3.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 500, 300));
+
+        jButton_Shop.setBackground(new java.awt.Color(204, 0, 204));
+        jButton_Shop.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_Shop.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_Shop.setText("Shop");
+        jButton_Shop.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_ShopMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_ShopMouseExited(evt);
+            }
+        });
+        jButton_Shop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_ShopActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton_Shop, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 230, 170, 47));
 
         jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 44, 710, 350));
 
@@ -140,7 +200,7 @@ public class Customer_Form extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 719, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -163,6 +223,24 @@ public class Customer_Form extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton_AccountSettingsActionPerformed
 
+    private void jButton_LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_LogoutActionPerformed
+        Smart_Shoppers_System login = new Smart_Shoppers_System();
+        login.setVisible(true);
+        login.pack();
+        login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.dispose();
+    }//GEN-LAST:event_jButton_LogoutActionPerformed
+
+    private void jButton_LogoutMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_LogoutMouseEntered
+        // set jbutton background
+        jButton_Logout.setBackground(new Color(255, 102, 255));
+    }//GEN-LAST:event_jButton_LogoutMouseEntered
+
+    private void jButton_LogoutMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_LogoutMouseExited
+        // set jbutton background
+        jButton_Logout.setBackground(new Color(204, 0, 204));
+    }//GEN-LAST:event_jButton_LogoutMouseExited
+
     private void jButton_AccountSettingsMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AccountSettingsMouseExited
         // set jbutton background
         jButton_AccountSettings.setBackground(new Color(204, 0, 204));
@@ -173,23 +251,84 @@ public class Customer_Form extends javax.swing.JFrame {
         jButton_AccountSettings.setBackground(new Color(255, 102, 255));
     }//GEN-LAST:event_jButton_AccountSettingsMouseEntered
 
-    private void jButton_LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_LogoutActionPerformed
-        Smart_Shoppers_System login = new Smart_Shoppers_System();
-        login.setVisible(true);
-        login.pack();
-        login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private void updateStoreTable(){   
+        try {
+            DefaultTableModel csvData = new DefaultTableModel();
+
+            if(csvData.getColumnCount() == 0 && storesFile.length() == 0){
+                csvData.addColumn("Store Name");
+                csvData.addColumn("Store Number");
+                csvData.addColumn("Manager");
+                csvData.addColumn("Address");
+                csvData.addColumn("Opening");
+                csvData.addColumn("Closing");
+            }else{
+                Scanner fileScan = new Scanner(storesFile);
+            
+                int start = 0;
+
+                while (fileScan.hasNextLine()) {
+                    String input = fileScan.nextLine();
+                    String[] userValues = input.split(",");
+                    
+                    String storeName = userValues[0];
+                    String storeNum = userValues[1];
+                    String manager = userValues[2];
+                    String address = userValues[3];
+                    String openingHours = userValues[4];
+                    String closingHours = userValues[5];
+
+                    if(start == 0){
+                        start = 1;
+                        csvData.addColumn("Store Name");
+                        csvData.addColumn("Store Number");
+                        csvData.addColumn("Manager");
+                        csvData.addColumn("Address");
+                        csvData.addColumn("Opening");
+                        csvData.addColumn("Closing");
+                    }
+                    else{
+                        Vector row = new Vector();
+                        row.add(storeName);
+                        row.add(storeNum);
+                        row.add(manager);
+                        row.add(address);
+                        row.add(openingHours);
+                        row.add(closingHours);
+                        csvData.addRow(row);
+                    }
+                }
+            }
+            jTable_StoresTable.setModel(csvData);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Admin_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void jTable_StoresTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_StoresTableMouseClicked
+        DefaultTableModel storeModel = (DefaultTableModel)jTable_StoresTable.getModel();
+        
+        this.originalStoreName = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 0).toString();
+        this.originalStoreID = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 1).toString();
+    }//GEN-LAST:event_jTable_StoresTableMouseClicked
+
+    private void jButton_ShopMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_ShopMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_ShopMouseEntered
+
+    private void jButton_ShopMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_ShopMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_ShopMouseExited
+
+    private void jButton_ShopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ShopActionPerformed
+        ShoppingList_Form list = new ShoppingList_Form();
+        list.getStoreID(this.originalStoreID);
+        list.getStoreName(this.originalStoreName);
+        list.setVisible(true);
+        list.pack();
+        list.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.dispose();
-    }//GEN-LAST:event_jButton_LogoutActionPerformed
-
-    private void jButton_LogoutMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_LogoutMouseExited
-        // set jbutton background
-        jButton_Logout.setBackground(new Color(204, 0, 204));
-    }//GEN-LAST:event_jButton_LogoutMouseExited
-
-    private void jButton_LogoutMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_LogoutMouseEntered
-        // set jbutton background
-        jButton_Logout.setBackground(new Color(255, 102, 255));
-    }//GEN-LAST:event_jButton_LogoutMouseEntered
+    }//GEN-LAST:event_jButton_ShopActionPerformed
 
     /**
      * @param args the command line arguments
@@ -231,8 +370,11 @@ public class Customer_Form extends javax.swing.JFrame {
     private javax.swing.JLabel customerLabel;
     private javax.swing.JButton jButton_AccountSettings;
     private javax.swing.JButton jButton_Logout;
+    private javax.swing.JButton jButton_Shop;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable_StoresTable;
     private javax.swing.JToggleButton jToggleButton1;
     // End of variables declaration//GEN-END:variables
 }

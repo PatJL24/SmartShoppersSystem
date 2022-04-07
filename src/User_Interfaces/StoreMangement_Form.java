@@ -10,7 +10,6 @@ import Data_Management.Maintain_Stores;
 import Data_Management.Maintain_Users;
 import Data_Management.Store;
 import Data_Management.User;
-import SmarkShopperSystem.Smart_Shoppers_System;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,17 +34,21 @@ public class StoreMangement_Form extends javax.swing.JFrame {
     String itemName;
     String ItemID;
     
-    String loginPath = "C:\\SmartShoppersSystem\\logins.csv";
+    String directoryPath = "C:\\SmartShoppersSystem\\database";
+    File systemPath = new File(directoryPath);   //directory file path
+    
+    String loginPath = "C:\\SmartShoppersSystem\\database\\logins.csv";
     File loginFile = new File(loginPath);
     
-    String storesPath = "C:\\SmartShoppersSystem\\stores.csv";
+    String storesPath = "C:\\SmartShoppersSystem\\database\\stores.csv";
     File storesFile = new File(storesPath);
     
-    String itemsPath = "C:\\SmartShoppersSystem\\items.csv";
+    String itemsPath = "C:\\SmartShoppersSystem\\database\\items.csv";
     File itemsFile = new File(itemsPath);
     
     String originalStoreID;
     String originalStoreName;
+    String originalManagerName;
     
     Item newItem;
     
@@ -55,22 +58,49 @@ public class StoreMangement_Form extends javax.swing.JFrame {
     public StoreMangement_Form() {
         initComponents();
         this.setLocationRelativeTo(null);
-        updateItemsTable();
-        updateStoreTable();
     }
     
     public void getUserType(String userType){
         this.userType = userType;
     }
     
-    public void getStoreNum (String storeNum){
-        this.storeID = storeNum;
+    public void getStoreID(String storeID){
+        this.originalStoreID = storeID;
+        storeNumLabel.setText("Store #: " + this.originalStoreID);
     }
     
     public void getStoreName(String storeName){
-        this.storeName = storeName;
-        storeLabel.setText("Store: " + storeName);
+        this.originalStoreName = storeName;
+        storeNameLabel.setText("Store: " + this.originalStoreName);
     }
+    
+    public void getManagerUsername(String managerName){
+        try {
+            this.originalManagerName = managerName;
+            
+            Scanner storesFileScan = new Scanner(storesFile);
+            
+            while (storesFileScan.hasNextLine()) {
+                String input = storesFileScan.nextLine();
+                String[] storeValues = input.split(",");
+                
+                String manager = storeValues[2];
+                String nameStore = storeValues[0];
+                String idStore = storeValues[1];
+                
+                if(managerName.equals(manager)){
+                    this.originalStoreID = idStore;
+                     storeNumLabel.setText("Store #: " + this.originalStoreID);
+                    this.originalStoreName = nameStore;
+                    storeNameLabel.setText("Store: " + this.originalStoreName);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(StoreMangement_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -82,7 +112,7 @@ public class StoreMangement_Form extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        storeLabel = new javax.swing.JLabel();
+        storeNumLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable_ItemsTable = new javax.swing.JTable();
@@ -118,33 +148,35 @@ public class StoreMangement_Form extends javax.swing.JFrame {
         jComboBox_OpeningHours = new javax.swing.JComboBox<>();
         jTextField_ItemAvailability = new javax.swing.JTextField();
         jButton_Close = new javax.swing.JButton();
+        jButton_UpdateTables = new javax.swing.JButton();
+        storeNameLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 51, 0));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        storeLabel.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        storeLabel.setForeground(new java.awt.Color(255, 255, 255));
-        storeLabel.setText("Store:");
-        jPanel1.add(storeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 410, 30));
+        storeNumLabel.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        storeNumLabel.setForeground(new java.awt.Color(255, 255, 255));
+        storeNumLabel.setText("Store #:");
+        jPanel1.add(storeNumLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 0, 220, 30));
 
         jPanel2.setBackground(new java.awt.Color(0, 204, 204));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jTable_ItemsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Item Name", "ItemID", "# of Items", "Size", "Price", "Description", "Category", "Aisle", "Sale"
+                "Item Name", "ItemID", "# of Items", "Size", "Price", "Description", "Category", "Aisle", "Sale", "Availability"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -346,6 +378,30 @@ public class StoreMangement_Form extends javax.swing.JFrame {
         });
         jPanel1.add(jButton_Close, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 0, 90, 40));
 
+        jButton_UpdateTables.setBackground(new java.awt.Color(204, 0, 204));
+        jButton_UpdateTables.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButton_UpdateTables.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_UpdateTables.setText("Update Tables");
+        jButton_UpdateTables.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_UpdateTablesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_UpdateTablesMouseExited(evt);
+            }
+        });
+        jButton_UpdateTables.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_UpdateTablesActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton_UpdateTables, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 0, 160, 40));
+
+        storeNameLabel.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        storeNameLabel.setForeground(new java.awt.Color(255, 255, 255));
+        storeNameLabel.setText("Store:");
+        jPanel1.add(storeNameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 30));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -391,12 +447,17 @@ public class StoreMangement_Form extends javax.swing.JFrame {
         DefaultTableModel storeModel = (DefaultTableModel)jTable_StoreTable.getModel();
 
         //set data to textfield when selected
-        String itemAvailability = storeModel.getValueAt(jTable_StoreTable.getSelectedRow(), 2).toString();
         String opening = storeModel.getValueAt(jTable_StoreTable.getSelectedRow(), 0).toString();
+        if(opening.equals("0:00")){
+            opening = "00:00";
+        }
         String closing = storeModel.getValueAt(jTable_StoreTable.getSelectedRow(), 1).toString();
+        String itemAvailability = storeModel.getValueAt(jTable_StoreTable.getSelectedRow(), 2).toString();
 
+        System.out.println(opening);
+        
         jTextField_ItemAvailability.setText(itemAvailability);
-        jComboBox_ClosingHours.setSelectedItem(opening);
+        jComboBox_OpeningHours.setSelectedItem(opening);
         jComboBox_ClosingHours.setSelectedItem(closing);
     }//GEN-LAST:event_jTable_StoreTableMouseClicked
 
@@ -521,26 +582,26 @@ public class StoreMangement_Form extends javax.swing.JFrame {
     
     private void updateItemsTable(){
         DefaultTableModel csvItemsData = new DefaultTableModel();
-        
-        if(itemsFile.length() == 0){
-                csvItemsData.addColumn("Item Name");
-                csvItemsData.addColumn("Item ID");
-                csvItemsData.addColumn("# of Items");
-                csvItemsData.addColumn("Size");
-                csvItemsData.addColumn("Price");
-                csvItemsData.addColumn("Description");
-                csvItemsData.addColumn("Category");
-                csvItemsData.addColumn("Aisle");
-                csvItemsData.addColumn("Sale");
-                csvItemsData.addColumn("Item Availability");
+ 
+        if(csvItemsData.getColumnCount() == 0 && itemsFile.length() == 0){
+            csvItemsData.addColumn("Item Name");
+            csvItemsData.addColumn("Item ID");
+            csvItemsData.addColumn("# of Items");
+            csvItemsData.addColumn("Size");
+            csvItemsData.addColumn("Price");
+            csvItemsData.addColumn("Description");
+            csvItemsData.addColumn("Category");
+            csvItemsData.addColumn("Aisle");
+            csvItemsData.addColumn("Sale");
+            csvItemsData.addColumn("Availability");
         }else{
             try {
-                Scanner fileScan = new Scanner(itemsFile);
+                Scanner itemsFileScan = new Scanner(itemsFile);
                 
                 int start = 0;
                 
-                while (fileScan.hasNextLine()) {
-                    String input = fileScan.nextLine();
+                while (itemsFileScan.hasNextLine()) {
+                    String input = itemsFileScan.nextLine();
                     String[] itemValues = input.split(",");
                     
                     String nameItem = itemValues[0];
@@ -551,35 +612,39 @@ public class StoreMangement_Form extends javax.swing.JFrame {
                     String itemSize = itemValues[5]; //Size
                     String itemPrice = itemValues[6]; //Price
                     String itemSale = itemValues[7]; //ItemOnSale
-                    String itemAvailabilty = itemValues[8]; //Item Avaiability
+                    String itemAvailabilty = itemValues[9]; //Item Avaiability
+                    
+                    String idStore = itemValues[8]; //Store ID
                     
                     if(start == 0){
-                        start = 1;
-                        csvItemsData.addColumn("Item Name");
-                        csvItemsData.addColumn("Item ID");
-                        csvItemsData.addColumn("# of Items");
-                        csvItemsData.addColumn("Size");
-                        csvItemsData.addColumn("Price");
-                        csvItemsData.addColumn("Description");
-                        csvItemsData.addColumn("Category");
-                        csvItemsData.addColumn("Aisle");
-                        csvItemsData.addColumn("Sale");
-                        csvItemsData.addColumn("Item Availability");
+                            start = 1;
+                            csvItemsData.addColumn("Item Name");
+                            csvItemsData.addColumn("Item ID");
+                            csvItemsData.addColumn("# of Items");
+                            csvItemsData.addColumn("Size");
+                            csvItemsData.addColumn("Price");
+                            csvItemsData.addColumn("Description");
+                            csvItemsData.addColumn("Category");
+                            csvItemsData.addColumn("Aisle");
+                            csvItemsData.addColumn("Sale");
+                            csvItemsData.addColumn("Availability");
+                    }else{
+                        if(idStore.equals(this.originalStoreID)){
+                            Vector row = new Vector();
+                            row.add(nameItem);
+                            row.add(itemID);
+                            row.add(itemAvailabilty);
+                            row.add(itemSize);
+                            row.add(itemPrice);
+                            row.add(itemDescription);
+                            row.add(itemCategory);
+                            row.add(itemAisle);
+                            row.add(itemSale);
+                            row.add(itemAvailabilty);
+                            csvItemsData.addRow(row);
+                        }
                     }
-                    else{
-                        Vector row = new Vector();
-                        row.add(nameItem);
-                        row.add(itemID);
-                        row.add(itemAvailabilty);
-                        row.add(itemSize);
-                        row.add(itemPrice);
-                        row.add(itemDescription);
-                        row.add(itemCategory);
-                        row.add(itemAisle);
-                        row.add(itemSale);
-                        row.add(itemAvailabilty);
-                        csvItemsData.addRow(row);
-                    }
+                    
                 }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(StoreMangement_Form.class.getName()).log(Level.SEVERE, null, ex);
@@ -625,6 +690,7 @@ public class StoreMangement_Form extends javax.swing.JFrame {
     
     private void jButton_AddItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddItemActionPerformed
         createItem();
+        updateItemsTable();
     }//GEN-LAST:event_jButton_AddItemActionPerformed
 
     private void jButton_CloseMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_CloseMouseEntered
@@ -661,13 +727,14 @@ public class StoreMangement_Form extends javax.swing.JFrame {
         try {
             DefaultTableModel csvData = new DefaultTableModel();
             
-            Scanner fileScan = new Scanner(storesFile);
+            Scanner storeFileScan = new Scanner(storesFile);
             
             int start = 0;
             
-            while (fileScan.hasNextLine()) {
-                String input = fileScan.nextLine();
+            while (storeFileScan.hasNextLine()) {
+                String input = storeFileScan.nextLine();
                 String[] userValues = input.split(",");
+                String idStore = userValues[1];
                 String openingHours = userValues[4];
                 String closingHours = userValues[5];
                 String totalItems = userValues[6];
@@ -679,11 +746,13 @@ public class StoreMangement_Form extends javax.swing.JFrame {
                     csvData.addColumn("Total Items");
                 }
                 else{
-                    Vector row = new Vector();
-                    row.add(openingHours);
-                    row.add(closingHours);
-                    row.add(totalItems);
-                    csvData.addRow(row);
+                    if(idStore.equals(this.originalStoreID)){
+                        Vector row = new Vector();
+                        row.add(openingHours);
+                        row.add(closingHours);
+                        row.add(totalItems);
+                        csvData.addRow(row);
+                    }
                 }
             }
             jTable_StoreTable.setModel(csvData);
@@ -692,15 +761,6 @@ public class StoreMangement_Form extends javax.swing.JFrame {
         }
     }
     
-    
-    private void jButton_UpdateStoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateStoreActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton_UpdateStoreActionPerformed
-
-    private void jButton_DeleteItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_DeleteItemActionPerformed
-        deleteItem();
-    }//GEN-LAST:event_jButton_DeleteItemActionPerformed
-
     
     private void updateItem(){
         //set data to textfield when selected
@@ -753,9 +813,73 @@ public class StoreMangement_Form extends javax.swing.JFrame {
         }
     }
     
+    private void jButton_UpdateStoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateStoreActionPerformed
+        updateStore();
+        updateStoreTable();
+    }//GEN-LAST:event_jButton_UpdateStoreActionPerformed
+
+    private void jButton_DeleteItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_DeleteItemActionPerformed
+        deleteItem();
+        updateItemsTable();
+    }//GEN-LAST:event_jButton_DeleteItemActionPerformed
+
+    
+    private void updateStore(){
+        //set data to textfield when selected
+        
+        if(jTable_StoreTable.getSelectedRowCount() == 1){
+            try {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to update the item?", "Updating Item",
+                        JOptionPane.OK_CANCEL_OPTION, 2);
+                
+                Maintain_Stores maintainStore = new Maintain_Stores();
+                maintainStore.load(storesPath);    
+                
+                if (input == 0){
+                    for(Store store: maintainStore.stores){
+                         if(store.getStoreNum().equals(this.originalStoreID)){
+                            String openingHours = jComboBox_OpeningHours.getSelectedItem().toString();
+                            String closingHours = jComboBox_ClosingHours.getSelectedItem().toString();
+                            String totalItems = jTextField_ItemAvailability.getText();
+                            store.setOpeningHours(openingHours);
+                            store.setClosingHours(closingHours);
+                            store.setTotalItems(totalItems);
+                            break;
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null, "Item Updated", "Updated", 2);
+                    maintainStore.update(storesPath);
+                }
+                updateItemsTable();
+            } catch (Exception ex) {
+                Logger.getLogger(Admin_Form.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            if(jTable_ItemsTable.getRowCount() == 0){
+                 JOptionPane.showMessageDialog(null, "Table is Empty", "Empty Table", 2);
+            }
+            JOptionPane.showMessageDialog(null, "Select a Row to update.", "Updated", 2);
+        }
+    }
+    
     private void jButton_UpdateItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateItemActionPerformed
         updateItem();
+        updateItemsTable();
     }//GEN-LAST:event_jButton_UpdateItemActionPerformed
+
+    private void jButton_UpdateTablesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateTablesMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_UpdateTablesMouseEntered
+
+    private void jButton_UpdateTablesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_UpdateTablesMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_UpdateTablesMouseExited
+
+    private void jButton_UpdateTablesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateTablesActionPerformed
+        updateItemsTable();
+        updateStoreTable();
+    }//GEN-LAST:event_jButton_UpdateTablesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -797,6 +921,7 @@ public class StoreMangement_Form extends javax.swing.JFrame {
     private javax.swing.JButton jButton_DeleteItem;
     private javax.swing.JButton jButton_UpdateItem;
     private javax.swing.JButton jButton_UpdateStore;
+    private javax.swing.JButton jButton_UpdateTables;
     private javax.swing.JComboBox<String> jComboBox_ClosingHours;
     private javax.swing.JComboBox<String> jComboBox_OpeningHours;
     private javax.swing.JComboBox<String> jComboBox_SaleItem;
@@ -828,7 +953,8 @@ public class StoreMangement_Form extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField_ItemPrice;
     private javax.swing.JTextField jTextField_ItemSize;
     private javax.swing.JTextField jTextField_NumOfItems;
-    private javax.swing.JLabel storeLabel;
+    private javax.swing.JLabel storeNameLabel;
+    private javax.swing.JLabel storeNumLabel;
     // End of variables declaration//GEN-END:variables
 
 }

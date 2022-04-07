@@ -8,7 +8,6 @@ import Data_Management.Maintain_Stores;
 import Data_Management.Maintain_Users;
 import Data_Management.Store;
 import Data_Management.User;
-import SmarkShopperSystem.Smart_Shoppers_System;
 
 import java.awt.Color;
 
@@ -31,13 +30,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Admin_Form extends javax.swing.JFrame {
     
-    String loginPath = "C:\\SmartShoppersSystem\\logins.csv";
+    String directoryPath = "C:\\SmartShoppersSystem\\database";
+    File systemPath = new File(directoryPath);   //directory file path
+    
+    String loginPath = "C:\\SmartShoppersSystem\\database\\logins.csv";
     File loginFile = new File(loginPath);
     
-    String storesPath = "C:\\SmartShoppersSystem\\stores.csv";
+    String storesPath = "C:\\SmartShoppersSystem\\database\\stores.csv";
     File storesFile = new File(storesPath);
     
-    String itemsPath = "C:\\SmartShoppersSystem\\items.csv";
+    String itemsPath = "C:\\SmartShoppersSystem\\database\\items.csv";
     File itemsFile = new File(itemsPath);
     
     String originalManagerName;
@@ -140,7 +142,8 @@ public class Admin_Form extends javax.swing.JFrame {
                 String[] storeValues = input.split(",");
                 String numStore = storeValues[1];
                 String storeManager = storeValues[2];
-            
+               
+                
                 if (!storeNum.equals(numStore) || !manager.equals(storeManager)) {
 
                     while(fileManager.hasNextLine()){
@@ -153,9 +156,11 @@ public class Admin_Form extends javax.swing.JFrame {
                         if(userType.equals("Manager")){
                             if(userName.equals(manager)){
                                 found = true;
-                                }
+                                break;
+                               }
                             }
-                        }  
+                        }
+                    return found;
                     }
                 }
         }
@@ -196,7 +201,7 @@ public class Admin_Form extends javax.swing.JFrame {
                 jTextField_StoreManager.setText("");
             }
             else{
-               JOptionPane.showMessageDialog(null, "Username Error. Try again.", "Error Message", JOptionPane.INFORMATION_MESSAGE);
+               JOptionPane.showMessageDialog(null, "Error. Try again.", "Error Message", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (FileNotFoundException ex) {
             //Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
@@ -792,8 +797,8 @@ public class Admin_Form extends javax.swing.JFrame {
         if(jTable_StoresTable.getSelectedRowCount() == 1){
             StoreMangement_Form  store_Form = new StoreMangement_Form();
             store_Form.setVisible(true);
-            store_Form.getStoreNum(originalStoreID);
-            store_Form.getStoreName(originalStoreName);
+            store_Form.getStoreID(this.originalStoreID);
+            store_Form.getStoreName(this.originalStoreName);
             store_Form.getUserType("Admin");
             store_Form.pack();
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -826,15 +831,18 @@ public class Admin_Form extends javax.swing.JFrame {
         
         //set data to textfield when selected
         
-        originalStoreName = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 0).toString();
-        originalStoreID = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 1).toString();
+        this.originalStoreName = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 0).toString();
+        this.originalStoreID = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 1).toString();
         String managerName = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 2).toString();
         String address = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 3).toString();
         String opening = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 4).toString();
+        if(opening.equals("0:00")){
+            opening = "00:00";
+        }
         String closing = storeModel.getValueAt(jTable_StoresTable.getSelectedRow(), 5).toString();
         
-        jTextField_StoreName.setText(originalStoreName);
-        jTextField_StoreNumber.setText(originalStoreID);
+        jTextField_StoreName.setText(this.originalStoreName);
+        jTextField_StoreNumber.setText(this.originalStoreID);
         jTextField_StoreManager.setText(managerName);
         jTextField_StoreAddress.setText(address);
         jComboBox_OpeningHours.setSelectedItem(opening);
@@ -845,7 +853,7 @@ public class Admin_Form extends javax.swing.JFrame {
         try {
             DefaultTableModel csvData = new DefaultTableModel();
 
-            if(storesFile.length() == 0){
+            if(csvData.getColumnCount() == 0 && storesFile.length() == 0){
                 csvData.addColumn("Store Name");
                 csvData.addColumn("Store Number");
                 csvData.addColumn("Manager");
@@ -898,6 +906,13 @@ public class Admin_Form extends javax.swing.JFrame {
     private void updateManagerTable(){
         try {            
             DefaultTableModel csvData = new DefaultTableModel();
+            
+            if(csvData.getColumnCount() == 0 && loginFile.length() <= 1){
+                csvData.addColumn("Username");
+                csvData.addColumn("Password");
+                csvData.addColumn("First Name");
+                csvData.addColumn("Last Name");
+            }
             
             Scanner fileScan = new Scanner(loginFile);
             
